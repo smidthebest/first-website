@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 var path = require('path'); 
+
 app.use(express.static('public'));
 app.get('/login.html', function (req, res) {
    res.sendFile( __dirname + "/" + "login.html" );
@@ -14,7 +15,7 @@ app.get('/chat.html', function(req, res) {
 })
 
 app.get('/signup.html', function(req, res) {
-    res.sendFile("/Users/siddharthamishra/Documents/VSCode/signup.html"); 
+    res.sendFile(__dirname + "/signup.html"); 
 })
 
 var con = mysql.createPool({
@@ -23,6 +24,8 @@ var con = mysql.createPool({
     password: "Firstserver1",
     database: "mydb"
 });
+
+
 
 app.get('/process_signup', function(req, res){
     var email = req.query.first_name; 
@@ -95,6 +98,15 @@ var server = app.listen(8081, function () {
    
    console.log("Example app listening at http://%s:%s", host, port)
 })
+
+var io = require('socket.io').listen(server); 
+io.on("connection", function(socket) {
+    socket.on("send message", function(sent_msg, callback) {
+        sent_msg = "Message: " + sent_msg;
+        io.sockets.emit("update messages", sent_msg);
+        callback();
+    });
+});
 
 
 
