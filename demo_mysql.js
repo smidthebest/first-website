@@ -2,14 +2,15 @@ var mysql = require("mysql");
 var express = require('express');
 var app = express();
 var fs = require('fs');
-
+var path = require('path'); 
 app.use(express.static('public'));
-app.get('/expresshtm.html', function (req, res) {
-   res.sendFile( __dirname + "/" + "expresshtm.html" );
+app.get('/login.html', function (req, res) {
+   res.sendFile( __dirname + "/" + "login.html" );
 })
 
-app.get('/index.html', function(req, res) {
-    res.sendFile(__dirname + "/index.html"); 
+app.use(express.static(path.join(__dirname, 'public2'))); 
+app.get('/chat.html', function(req, res) {
+    res.sendFile(__dirname + "/chat.html"); 
 })
 
 app.get('/signup.html', function(req, res) {
@@ -38,7 +39,7 @@ app.get('/process_signup', function(req, res){
                 con.query(sql, function (err, result) {
                     if (err) throw err;
                 });
-                res.redirect("index.html"); 
+                res.redirect("chat.html"); 
             }
             else {
                 console.log(result); 
@@ -71,7 +72,7 @@ app.get('/process_get', function (req, res) {
                 console.log("You inputed the wrong password."); 
             }
             else {
-                res.redirect("index.html");
+                res.redirect("chat.html");
                 /*
                 This has to be moved!!
                 */
