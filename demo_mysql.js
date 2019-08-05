@@ -1,8 +1,14 @@
 var mysql = require("mysql");
 var express = require('express');
 var app = express();
-var fs = require('fs');
 var path = require('path'); 
+app.set("view engine", "pug"); 
+app.set("VSCode", path.join(__dirname, "VSCode")); 
+var fs = require('fs');
+
+
+
+var finEmail = ""; 
 
 app.use(express.static('public'));
 app.get('/login.html', function (req, res) {
@@ -11,7 +17,7 @@ app.get('/login.html', function (req, res) {
 
 app.use(express.static(path.join(__dirname, 'public2'))); 
 app.get('/chat.html', function(req, res) {
-    res.sendFile(__dirname + "/chat.html"); 
+    res.render('chat.ejs');
 })
 
 app.get('/signup.html', function(req, res) {
@@ -24,7 +30,6 @@ var con = mysql.createPool({
     password: "Firstserver1",
     database: "mydb"
 });
-
 
 
 app.get('/process_signup', function(req, res){
@@ -42,6 +47,8 @@ app.get('/process_signup', function(req, res){
                 con.query(sql, function (err, result) {
                     if (err) throw err;
                 });
+                var querystring = encodeURIComponent(email); 
+                finEmail = email; 
                 res.redirect("chat.html"); 
             }
             else {
@@ -57,6 +64,7 @@ app.get('/process_signup', function(req, res){
 })
 
 app.get('/process_get', function (req, res) {
+    console.log("hi"); 
    // Prepare output in JSON format
    var email = req.query.first_name; 
    var pass = req.query.last_name; 
@@ -75,13 +83,16 @@ app.get('/process_get', function (req, res) {
                 console.log("You inputed the wrong password."); 
             }
             else {
-                res.redirect("chat.html");
+                var querystring = encodeURIComponent(email); 
+                finEmail = email; 
+                res.redirect("chat.html"); 
                 /*
                 This has to be moved!!
                 */
             }
         }
         else{
+
             console.log("You have not created an account"); 
         }
     });
@@ -92,22 +103,28 @@ app.get('/process_get', function (req, res) {
  
 })
 
+
+
 var server = app.listen(8081, function () {
-   var host = server.address().address
-   var port = server.address().port
-   
-   console.log("Example app listening at http://%s:%s", host, port)
-})
-
-var io = require('socket.io').listen(server); 
-io.on("connection", function(socket) {
-    socket.on("send message", function(sent_msg, callback) {
-        sent_msg = "Message: " + sent_msg;
-        io.sockets.emit("update messages", sent_msg);
-        callback();
+    var host = server.address().address
+    var port = server.address().port
+    
+    console.log("Example app listening at http://%s:%s", host, port)
+ })
+ 
+ var io = require('socket.io').listen(server); 
+ io.on("connection", function(socket) {
+    socket.on('username', function(username) {
+        socket.username = finEmail;
+        io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>');
     });
-});
 
+    socket.on('disconnect', function(username) {
+        io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
+    })
 
-
-
+    socket.on('chat_message', function(message) {
+        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
+    });
+ });
+ 
