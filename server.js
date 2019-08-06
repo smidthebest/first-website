@@ -153,7 +153,7 @@ var server = app.listen(8081, function () {
     con.getConnection(function(err) {
         if (err) throw err;
     
-        con.query("SELECT email FROM users", function (err, result, fields) {
+        con.query("SELECT email FROM hi", function (err, result, fields) {
             if (err) throw err;
             io.emit('data', result); 
         });
