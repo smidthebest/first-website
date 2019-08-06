@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var path = require('path'); 
 app.set("view engine", "pug"); 
-app.set("FirstWebsite", path.join(__dirname, "FirstWebsite")); 
+app.set("first-website", path.join(__dirname, "first-website")); 
 var fs = require('fs');
 
 
