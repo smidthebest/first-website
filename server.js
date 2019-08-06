@@ -10,6 +10,10 @@ var fs = require('fs');
 
 var finEmail = ""; 
 
+
+app.get('/require.js', function(req, res){
+    res.sendfile(__dirname + "/require.js"); 
+})
 app.use(express.static('public'));
 app.get('/login.html', function (req, res) {
    res.sendFile( __dirname + "/" + "login.html" );
@@ -53,7 +57,7 @@ app.get('/process_signup', function(req, res){
                 res.redirect("chat.html"); 
             }
             else {
-                console.log(result); 
+                
                 console.log("Username already exists. Please try a new one.");
             }
         })
@@ -65,7 +69,6 @@ app.get('/process_signup', function(req, res){
 })
 
 app.get('/process_get', function (req, res) {
-    console.log("hi"); 
    // Prepare output in JSON format
    var email = req.query.first_name; 
    var pass = req.query.last_name; 
@@ -79,7 +82,7 @@ app.get('/process_get', function (req, res) {
     con.query("SELECT * FROM users WHERE email = '" + email +"'", function(err, result) {
         if(err) throw err; 
         if(result.length != 0) {
-            console.log(result[0].password + " " + pass); 
+            
             if(result[0].password != pass){
                 console.log("You inputed the wrong password."); 
             }
@@ -93,7 +96,6 @@ app.get('/process_get', function (req, res) {
             }
         }
         else{
-
             console.log("You have not created an account"); 
         }
     });
@@ -127,5 +129,15 @@ var server = app.listen(8081, function () {
     socket.on('chat_message', function(message) {
         io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
     });
+
+    con.getConnection(function(err) {
+        if (err) throw err;
+    
+        con.query("SELECT email FROM users", function (err, result, fields) {
+            if (err) throw err;
+            io.emit('data', result); 
+        });
+    }); 
+
  });
  

@@ -44,12 +44,8 @@
       
       <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
       <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+      
       <script type="text/javascript">
-
-        
-  
-        
-
           window.scrollTo(0,document.body.scrollHeight);
 
         var socket = io.connect();
@@ -60,41 +56,32 @@
           return false;
         });
     
-              socket.on('chat_message', function(msg){
-                  $('#messages').append($('<li>').html(msg));
-              });
-
-              // append text if someone is online
-              socket.on('is_online', function(username) {
-                  $('#messages').append($('<li>').html(username));
-              });
-
-              // ask username
-              //var username = prompt('Please tell me your name');
-              var username = ""; 
-              socket.emit('username', username);
-
-
-
-        var mysql = require("mysql");
-        
-        var con = mysql.createPool({
-            host: "localhost", 
-            user: "root",
-            password: "Firstserver1",
-            database: "mydb"
+        socket.on('chat_message', function(msg){
+            $('#messages').append($('<li>').html(msg));
         });
-        console.log(con); 
-        con.getConnection(function(err) {
-            if (err) throw err;
-            con.query("SELECT email FROM users", function (err, result, fields) {
-              if (err) throw err;
-              console.log(result);
-              for( i in result){
-                document.getElementById("fList").append(i); 
-              }
-            });
-          }); 
+
+        // append text if someone is online
+        socket.on('is_online', function(username) {
+            $('#messages').append($('<li>').html(username));
+        });
+
+        // ask username
+        //var username = prompt('Please tell me your name');
+        var username = ""; 
+        socket.emit('username', username);
+
+        socket.on('data', function(data){
+          for(var i = 0; i<data.length; i++){
+              console.log(data[i].email); 
+              $('#fList').append($('<ul>').html(data[i].email)); 
+            }
+        })
+
+
+
+              
+
+              
     </script>
 	</body>
 </html>
