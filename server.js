@@ -32,7 +32,7 @@ app.get('/signup.html', function(req, res) {
 var con = mysql.createPool({
     host: "localhost", 
     user: "root",
-    password: "Firstserver1",
+    password: "dashMarley7",
     database: "mydb"
 });
 
