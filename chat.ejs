@@ -1,0 +1,100 @@
+
+<!------ Include the above in your HEAD tag ---------->
+
+<!DOCTYPE html>
+<html>
+	<head>
+    <title>Chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form {margin: 10px;  left: 10%; background: #fff; padding: 3px; position: fixed; bottom: 0; width: 90%; border-color: #000; border-top-style: solid; border-top-width: 1px;}
+      form input { border-style: solid; border-width: 1px; padding: 10px; width: 85%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; margin-left: 2%; }
+      #messages {  list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #scroll {margin: 10px; left: 10%; position: fixed; bottom: 50px; width: 90%}
+      #friends{  padding: 10px; position: fixed; left:0%; width: 10%; height: 100%; background: red }
+  </style>
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+        <link rel = "stylesheet" type = "text/css" href="chatstyles.css">
+	</head>
+		<body>
+      <div id="friends">
+        <ul id="fList">
+
+        </ul>
+      </div>
+      <div id = "scroll">
+        <ul id="messages"></ul>
+      </div>
+      </div>
+        <form class="form-signin" id ="chatForm" action = "/chat.html" method = "GET">
+          <input id="txt" autocomplete="off" autofocus="on" oninput="isTyping()" placeholder="type your message here..." /><button>Send</button>        
+        </form>
+      </div>
+      
+      <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+      <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+      <script type="text/javascript">
+
+        
+  
+        
+
+          window.scrollTo(0,document.body.scrollHeight);
+
+        var socket = io.connect();
+        $('form').submit(function(e){
+          e.preventDefault(); // prevents page reloading
+          socket.emit('chat_message', $('#txt').val());
+          $('#txt').val('');
+          return false;
+        });
+    
+              socket.on('chat_message', function(msg){
+                  $('#messages').append($('<li>').html(msg));
+              });
+
+              // append text if someone is online
+              socket.on('is_online', function(username) {
+                  $('#messages').append($('<li>').html(username));
+              });
+
+              // ask username
+              //var username = prompt('Please tell me your name');
+              var username = ""; 
+              socket.emit('username', username);
+
+
+
+        var mysql = require("mysql");
+        
+        var con = mysql.createPool({
+            host: "localhost", 
+            user: "root",
+            password: "Firstserver1",
+            database: "mydb"
+        });
+        console.log(con); 
+        con.getConnection(function(err) {
+            if (err) throw err;
+            con.query("SELECT email FROM users", function (err, result, fields) {
+              if (err) throw err;
+              console.log(result);
+              for( i in result){
+                document.getElementById("fList").append(i); 
+              }
+            });
+          }); 
+    </script>
+	</body>
+</html>

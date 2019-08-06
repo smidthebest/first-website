@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var path = require('path'); 
 app.set("view engine", "pug"); 
-app.set("VSCode", path.join(__dirname, "VSCode")); 
+app.set("FirstWebsite", path.join(__dirname, "FirstWebsite")); 
 var fs = require('fs');
 
 
@@ -17,7 +17,8 @@ app.get('/login.html', function (req, res) {
 
 app.use(express.static(path.join(__dirname, 'public2'))); 
 app.get('/chat.html', function(req, res) {
-    res.render('chat.ejs');
+    if(finEmail == "") res.redirect("login.html");
+    else res.render('chat.ejs');
 })
 
 app.get('/signup.html', function(req, res) {
