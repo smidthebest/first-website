@@ -64,19 +64,22 @@
 
         // append text if someone is online
         socket.on('is_online', function(username) {
-            $('#messages').append($('<li>').html(username));
+          for(var i = 0; i<username.length; i++){
+              console.log(username[i].data); 
+              $('#messages').append('<li> <strong>' +socket.username+ '</strong>: ' + username[i].data + '</li>');
+            }
         });
 
         // ask username
-        
         var username = ""; 
+        socket.emit('username', username); 
         
         
         socket.on('data', function(data){
           if(document.getElementById("fList").getElementsByTagName("ul").length < data.length){
             for(var i = 0; i<data.length; i++){
               console.log(data[i].email); 
-              $('#fList').append("<ul> <a href ='chat.html'>" + data[i].email + "</ul>"); 
+              $('#fList').append("<ul> <a href ='chat.html>" + data[i].email + "</ul>"); 
             } 
           }  
         });   
@@ -88,8 +91,8 @@
           }
           else {
             // not first visit, so alert
-            var username = prompt('Please tell me your name');
-            socket.emit('username1', username);
+            // var username = prompt('Please tell me your name');
+            // socket.emit('username1', username);
         
           }
         }

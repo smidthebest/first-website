@@ -54,6 +54,12 @@ app.get('/process_signup', function(req, res){
                 });
                 var querystring = encodeURIComponent(email); 
                 finEmail = email; 
+                con.query("CREATE TABLE mydb." +finEmail +" (num int, name varchar(255), data longtext)", function(err, result) {
+                    console.log(result); 
+                    if(err) throw err; 
+
+                }) ; 
+                
                 res.redirect("chat.html"); 
             }
             else {
@@ -119,12 +125,15 @@ var server = app.listen(8081, function () {
  io.on("connection", function(socket) {
     socket.on('username', function(username) {
         socket.username = finEmail;
-        io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>');
+        
+        con.getConnection(function(err){
+            if(err) throw err; 
+            con.query("SELECT data FROM " + socket.username , function(err, result){
+                if(err) throw err; 
+                io.emit('is_online', result);
+            });
+        })
     });
-
-    socket.on('username1', function(username){
-        socket.username = username; 
-    })
 
     socket.on('disconnect', function(username) {
         io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
@@ -132,6 +141,13 @@ var server = app.listen(8081, function () {
 
     socket.on('chat_message', function(message) {
         io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
+        con.getConnection(function(err) {
+            if(err) throw err; 
+            var sql = "INSERT INTO " + socket.username + " (num, name, data) VALUES " + "(1, 'null', '" + message + "')";
+            con.query(sql, function(err, result){
+                if (err) throw err; 
+            });
+        });
     });
 
     con.getConnection(function(err) {
