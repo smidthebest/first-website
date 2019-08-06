@@ -10,7 +10,6 @@ var fs = require('fs');
 
 var finEmail = ""; 
 
-
 app.get('/require.js', function(req, res){
     res.sendfile(__dirname + "/require.js"); 
 })
