@@ -63,10 +63,11 @@
         });
 
         // append text if someone is online
-        socket.on('is_online', function(username) {
+        socket.on('is_online', function(name, username) {
           for(var i = 0; i<username.length; i++){
-              console.log(username[i].data); 
-              $('#messages').append('<li> <strong>' +socket.username+ '</strong>: ' + username[i].data + '</li>');
+              console.log(name); 
+
+              $('#messages').append('<li> <strong>' +name+ '</strong>: ' + username[i].data + '</li>');
             }
         });
 
