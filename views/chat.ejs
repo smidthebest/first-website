@@ -8,16 +8,16 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
-      form {margin: 10px;  left: 15%; background: #fff; padding: 3px; position: fixed; bottom: 0; width: 80%; border-color: #000; border-top-style: solid; border-top-width: 1px;}
+      form {margin: 10px;  left: 15%; background: #fff; padding: 3px; position: absolute; bottom: 0; width: 80%; border-color: #000; border-top-style: solid; border-top-width: 1px;}
       form input { border-style: solid; border-width: 1px; padding: 10px; width: 85%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; margin-left: 2%; }
-      #messages {  list-style-type: none; margin: 0; padding: 0; }
+      #messages {  list-style-type: none; margin: 0; padding: 0; vertical-align: bottom;}
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
       #fList {padding:5px 10px}
       #fList:nth-child(odd) {background: #eee}
-      #scroll {margin: 10px; left: 15%; position: fixed; bottom: 50px; width: 80%}
-      #friends{ border:1px solid black;  padding: 10px; position: fixed; left:0%; width: 15%; height: 100%; background: red }
+      #scroll {margin: 10px; left: 15%; position: relative; bottom: 50px; width: 80%; height:90%; overflow: auto; vertical-align: bottom;}
+      #friends{ border:1px solid black;  padding: 10px; position: absolute; left:0%; width: 15%; height: 100%; background: red }
   </style>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
@@ -31,12 +31,12 @@
 	</head>
     <body onload="checkFirstVisit()">
       <div id="friends">
-        <ul id="fList" style="overflow-x: scroll">
+        <ul id="fList" style="height:90%; overflow: auto">
 
         </ul>
       </div>
       <div id = "scroll">
-        <ul id="messages"></ul>
+        <ul id="messages" style=""></ul>
       </div>
       </div>
         <form class="form-signin" id ="chatForm" action = "/chat.html" method = "GET">
@@ -48,26 +48,35 @@
       <script type="text/javascript" src="/socket.io/socket.io.js"></script>
       
       <script type="text/javascript">
-          window.scrollTo(0,document.body.scrollHeight);
+          var elem = document.getElementById("scroll");
+          elem.scrollTop = elem.scrollHeight; 
 
         var socket = io.connect();
         $('form').submit(function(e){
           e.preventDefault(); // prevents page reloading
-          socket.emit('chat_message', $('#txt').val());
+          console.log(Date.now()); 
+          socket.emit('chat_message', $('#txt').val(), );
           $('#txt').val('');
           return false;
         });
     
-        socket.on('chat_message', function(msg){
-            $('#messages').append($('<li>').html(msg));
+        socket.on('chat_message', function(msg, username){
+          var date =  new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
+              var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes(); 
+              $('#messages').append('<li> <strong>' +username+ '</strong> ' + useDate + ': ' + msg + '</li>');
+              var elem = document.getElementById("scroll");
+              elem.scrollTop = elem.scrollHeight; 
         });
 
         // append text if someone is online
         socket.on('is_online', function(name, username) {
           for(var i = 0; i<username.length; i++){
-              console.log(name); 
-
-              $('#messages').append('<li> <strong>' +name+ '</strong>: ' + username[i].data + '</li>');
+              
+              var date = new Date(username[i].dt); 
+              var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes(); 
+              $('#messages').append('<li> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i].data + '</li>');
             }
         });
 
@@ -75,7 +84,7 @@
         var username = ""; 
         socket.emit('username', username); 
         
-        
+        //NEED to fix this?!?!
         socket.on('data', function(data){
           if(document.getElementById("fList").getElementsByTagName("ul").length < data.length){
             for(var i = 0; i<data.length; i++){
@@ -91,12 +100,13 @@
             document.cookie = 'mycookie=1';
           }
           else {
-            // not first visit, so alert
-            // var username = prompt('Please tell me your name');
-            // socket.emit('username1', username);
+            
+            //trying to redirect to login page...
         
           }
         }
+
+
 
     </script>
 	</body>

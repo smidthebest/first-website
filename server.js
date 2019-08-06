@@ -54,7 +54,7 @@ app.get('/process_signup', function(req, res){
                 });
                 var querystring = encodeURIComponent(email); 
                 finEmail = email; 
-                con.query("CREATE TABLE mydb." +finEmail +" (num int, name varchar(255), data longtext)", function(err, result) {
+                con.query("CREATE TABLE mydb." +finEmail +" (num int, name varchar(255), data longtext, dt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)", function(err, result) {
                     console.log(result); 
                     if(err) throw err; 
 
@@ -112,6 +112,7 @@ app.get('/process_get', function (req, res) {
  
 })
 
+var msgs = []
 
 
 var server = app.listen(8081, function () {
@@ -125,29 +126,27 @@ var server = app.listen(8081, function () {
  io.on("connection", function(socket) {
     socket.on('username', function(username) {
         socket.username = finEmail;
-        
+        socket.msgs = [];
         con.getConnection(function(err){
             if(err) throw err; 
-            con.query("SELECT data FROM " + socket.username , function(err, result){
+            con.query("SELECT data, dt FROM " + socket.username , function(err, result){
                 if(err) throw err; 
-                io.emit('is_online', result);
+                io.emit('is_online', finEmail, result);
             });
         })
     });
 
     socket.on('disconnect', function(username) {
-        io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
+
+        if(socket.username =="") return; 
+        processMsgs(socket.username, socket.msgs); 
     })
 
     socket.on('chat_message', function(message) {
-        io.emit('chat_message', '<strong>' + socket.username + '</strong>: ' + message);
-        con.getConnection(function(err) {
-            if(err) throw err; 
-            var sql = "INSERT INTO " + socket.username + " (num, name, data) VALUES " + "(1, 'null', '" + message + "')";
-            con.query(sql, function(err, result){
-                if (err) throw err; 
-            });
-        });
+
+        io.emit('chat_message', message, socket.username);
+        
+        socket.msgs.push(message); 
     });
 
     con.getConnection(function(err) {
@@ -160,4 +159,21 @@ var server = app.listen(8081, function () {
     }); 
 
  });
+
+ function processMsgs(username, msgs){
+    con.getConnection(function(err) {
+        if(err) throw err; 
+        for(var i = 0; i<msgs.length; i++){
+            
+            msgs[i] = msgs[i].replace(/'/g, "''");
+            msgs[i] = msgs[i].replace(/"/g,'""' );
+         
+            var sql = "INSERT INTO " + username + " (num, name, data) VALUES (1, 'null', '" + msgs[i] + "')";
+            
+            con.query(sql, function(err, result){
+                if (err) throw err; 
+            });
+        }
+    });
+ }
  
