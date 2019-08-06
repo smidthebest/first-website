@@ -122,6 +122,10 @@ var server = app.listen(8081, function () {
         io.emit('is_online', '🔵 <i>' + socket.username + ' join the chat..</i>');
     });
 
+    socket.on('username1', function(username){
+        socket.username = username; 
+    })
+
     socket.on('disconnect', function(username) {
         io.emit('is_online', '🔴 <i>' + socket.username + ' left the chat..</i>');
     })
