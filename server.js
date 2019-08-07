@@ -124,15 +124,7 @@ var server = app.listen(8081, function () {
  var io = require('socket.io').listen(server); 
  io.on("connection", function(socket) {
     socket.on('username', function(username) {
-        socket.username = finEmail;
-        socket.msgs = [];
-        con.getConnection(function(err){
-            if(err) throw err; 
-            con.query("SELECT data, dt FROM " + socket.username , function(err, result){
-                if(err) throw err; 
-                io.emit('is_online', finEmail, result);
-            });
-        })
+       
     });
 
     socket.on('disconnect', function(username) {
@@ -150,14 +142,18 @@ var server = app.listen(8081, function () {
 
     socket.on('found_part', function(username){
         socket.partner = username; 
+        socket.username = finEmail;
+        socket.msgs = [];
         con.getConnection(function(err) {
             if (err) throw err;
         
-            con.query("SELECT data, dt FROM " + socket.username +" WHERE name ='" + username+"'", function(err, result){
+            con.query("SELECT data, dt FROM " + socket.username +" WHERE name ='" + socket.partner+"'", function(err, result){
                 if(err) throw err; 
+                console.log(result); 
                 io.emit('is_online', finEmail, result);
             });
         }); 
+        
     });
 
     con.getConnection(function(err) {
