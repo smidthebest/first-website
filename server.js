@@ -158,8 +158,7 @@ var server = app.listen(8081, function () {
                     secondData = result;
                     console.log(result.length); 
                     
-                    console.log(total); 
-                    io.emit('is_online', finEmail, firstData, secondData);
+                    io.emit('is_online', username, finEmail, firstData, secondData);
                     
                 });
                
