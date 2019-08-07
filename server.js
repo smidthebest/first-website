@@ -138,7 +138,7 @@ var server = app.listen(8081, function () {
     socket.on('disconnect', function(username) {
 
         if(socket.username =="") return; 
-        processMsgs(socket.username, socket.msgs); 
+        processMsgs(socket.username, socket.msgs, socket.partner); 
     })
 
     socket.on('chat_message', function(message) {
@@ -146,6 +146,18 @@ var server = app.listen(8081, function () {
         io.emit('chat_message', message, socket.username);
         
         socket.msgs.push(message); 
+    });
+
+    socket.on('found_part', function(username){
+        socket.partner = username; 
+        con.getConnection(function(err) {
+            if (err) throw err;
+        
+            con.query("SELECT data, dt FROM " + socket.username +" WHERE name ='" + username+"'", function(err, result){
+                if(err) throw err; 
+                io.emit('is_online', finEmail, result);
+            });
+        }); 
     });
 
     con.getConnection(function(err) {
@@ -159,7 +171,7 @@ var server = app.listen(8081, function () {
 
  });
 
- function processMsgs(username, msgs){
+ function processMsgs(username, msgs, partner){
     con.getConnection(function(err) {
         if(err) throw err; 
         for(var i = 0; i<msgs.length; i++){
@@ -167,7 +179,7 @@ var server = app.listen(8081, function () {
             msgs[i] = msgs[i].replace(/'/g, "''");
             msgs[i] = msgs[i].replace(/"/g,'""' );
          
-            var sql = "INSERT INTO " + username + " (num, name, data) VALUES (1, 'null', '" + msgs[i] + "')";
+            var sql = "INSERT INTO " + username + " (num, name, data) VALUES (1, '" + partner + "', '" + msgs[i] + "')";
             
             con.query(sql, function(err, result){
                 if (err) throw err; 
