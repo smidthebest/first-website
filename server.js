@@ -54,7 +54,6 @@ app.get('/process_signup', function(req, res){
                 var querystring = encodeURIComponent(email); 
                 finEmail = email; 
                 con.query("CREATE TABLE mydb." +finEmail +" (num int, name varchar(255), data longtext, dt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)", function(err, result) {
-                    console.log(result); 
                     if(err) throw err; 
 
                 }) ; 
@@ -124,7 +123,7 @@ var server = app.listen(8081, function () {
  var io = require('socket.io').listen(server); 
  io.on("connection", function(socket) {
     socket.on('username', function(username) {
-       
+        socket.username = finEmail;
     });
 
     socket.on('disconnect', function(username) {
@@ -142,16 +141,34 @@ var server = app.listen(8081, function () {
 
     socket.on('found_part', function(username){
         socket.partner = username; 
-        socket.username = finEmail;
+        
         socket.msgs = [];
         con.getConnection(function(err) {
             if (err) throw err;
         
+            var firstData = [];
             con.query("SELECT data, dt FROM " + socket.username +" WHERE name ='" + socket.partner+"'", function(err, result){
                 if(err) throw err; 
-                console.log(result); 
-                io.emit('is_online', finEmail, result);
+                firstData = result;
+                
+                var secondData = [];
+
+                con.query("SELECT data, dt FROM " + socket.partner +" WHERE name ='" + socket.username+"'", function(err, result){
+                    if(err) throw err; 
+                    secondData = result;
+                    console.log(result.length); 
+                    
+                    console.log(total); 
+                    io.emit('is_online', finEmail, firstData, secondData);
+                    
+                });
+               
             });
+            
+            
+
+            
+            
         }); 
         
     });

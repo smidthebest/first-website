@@ -63,14 +63,26 @@
         socket.on('chat_message', function(msg, username){
           var date =  new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes(); 
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() + ":" + date.getSeconds(); 
               $('#messages').append('<li> <strong>' +username+ '</strong> ' + useDate + ': ' + msg + '</li>');
               var elem = document.getElementById("scroll");
               elem.scrollTop = elem.scrollHeight; 
         });
 
         // append text if someone is online
-        socket.on('is_online', function(name, username) {
+        socket.on('is_online', function(name, firstData, secondData) {
+          const username = [...firstData, ...secondData];  
+         // var firstDataWU = 
+          console.log(total); 
+          username.sort(function sort(a, b){
+              var aDt = new Date(a.dt); 
+              var bDt = new Date(b.dt); 
+              if(aDt == bDt) return 0; 
+              else {
+                  return (aDt < bDt) ? -1 : 1; 
+              }
+          });
+
           for(var i = 0; i<username.length; i++){
               
               var date = new Date(username[i].dt); 
