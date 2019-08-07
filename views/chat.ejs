@@ -31,16 +31,16 @@
 	</head>
     <body onload="checkFirstVisit()">
       <div id="friends">
-        <ul id="fList" style="height:90%; overflow: auto">
+        <ul id="fList">
 
         </ul>
       </div>
       <div id = "scroll">
-        <ul id="messages" "></ul>
+        <ul id="messages" ></ul>
       </div>
       </div>
         <form class="form-signin" id ="chatForm" action = "/chat.html" method = "GET">
-          <input id="txt" autocomplete="off" autofocus="on" oninput="isTyping()" placeholder="type your message here..." /><button>Send</button>        
+          <input id="txt" autocomplete="off" autofocus="on" placeholder="type your message here..." /><button>Send</button>        
         </form>
       </div>
       
@@ -89,7 +89,7 @@
           if(document.getElementById("fList").getElementsByTagName("ul").length < data.length){
             for(var i = 0; i<data.length; i++){
               console.log(data[i].email); 
-              $('#fList').append("<ul> <a href ='chat.html>" + data[i].email + "</ul>"); 
+              $('#fList').append("<ul> <a href='chat.html'>" + data[i].email + "</ul>"); 
             } 
           }  
         });   
