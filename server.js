@@ -9,7 +9,7 @@ var fs = require('fs');
 
 
 var finEmail = ""; 
-
+var users = {}; 
 app.get('/require.js', function(req, res){
     res.sendfile(__dirname + "/require.js"); 
 })
@@ -29,6 +29,7 @@ app.get('/signup.html', function(req, res) {
 })
 
 var con = mysql.createPool({
+    connectionLimit: 10, 
     host: "localhost", 
     user: "root",
     password: "Firstserver1",
@@ -123,29 +124,35 @@ var server = app.listen(8081, function () {
  var io = require('socket.io').listen(server); 
  io.on("connection", function(socket) {
     socket.on('username', function(username) {
+        users[finEmail] = socket;  
         socket.username = finEmail;
+        socket.msgs = [];
+        
     });
 
-    socket.on('disconnect', function(username) {
+    socket.on('disconnect', function() {
 
+        console.log(socket.username); 
         if(socket.username =="") return; 
         processMsgs(socket.username, socket.msgs, socket.partner); 
     })
 
     socket.on('chat_message', function(message) {
-
-        io.emit('chat_message', message, socket.username);
+        //io.emit('chat_message', message, socket.username);
         
-        socket.msgs.push(message); 
+        if(users[socket.partner] != null && users[socket.partner].partner == socket.username) users[socket.partner].emit('chat_message', message, socket.username); 
+        users[socket.username].emit('chat_message', message, socket.username);
+        socket.msgs.push([message, new Date(Date.now())]); 
+        console.log("this is messages for " + socket.username + ": " + socket.msgs); 
     });
 
     socket.on('found_part', function(username){
+        users[socket.username].emit('clear'); 
         socket.partner = username; 
-        
-        socket.msgs = [];
+
         con.getConnection(function(err) {
             if (err) throw err;
-        
+           
             var firstData = [];
             con.query("SELECT data, dt FROM " + socket.username +" WHERE name ='" + socket.partner+"'", function(err, result){
                 if(err) throw err; 
@@ -155,19 +162,12 @@ var server = app.listen(8081, function () {
 
                 con.query("SELECT data, dt FROM " + socket.partner +" WHERE name ='" + socket.username+"'", function(err, result){
                     if(err) throw err; 
-                    secondData = result;
-                    console.log(result.length); 
-                    
-                    io.emit('is_online', username, finEmail, firstData, secondData);
+                    secondData = result;                    
+                    users[socket.username].emit('is_online', username, finEmail, firstData, secondData);
                     
                 });
                
             });
-            
-            
-
-            
-            
         }); 
         
     });
@@ -184,14 +184,17 @@ var server = app.listen(8081, function () {
  });
 
  function processMsgs(username, msgs, partner){
+    console.log( username  + " " + partner); 
+
     con.getConnection(function(err) {
         if(err) throw err; 
         for(var i = 0; i<msgs.length; i++){
-            
-            msgs[i] = msgs[i].replace(/'/g, "''");
-            msgs[i] = msgs[i].replace(/"/g,'""' );
-         
-            var sql = "INSERT INTO " + username + " (num, name, data) VALUES (1, '" + partner + "', '" + msgs[i] + "')";
+            console.log(username + " " + partner); 
+            msgs[i][0] = msgs[i].replace(/'/g, "''");
+            msgs[i][0] = msgs[i].replace(/"/g,'""' );
+             dt = msgs[i][1]; 
+            //var date = dt.getYear() + "-" + dt.getMonth() + "-" + dt.getDate() + "T" + dt.getHours() + ":"+dt.getMinutes()+":"+dt.geSeconds();
+            var sql = "INSERT INTO " + username + " ( name, data, dt) VALUES (1, '" + partner + "', '" + msgs[i] + "', '"+date + ")";
             
             con.query(sql, function(err, result){
                 if (err) throw err; 

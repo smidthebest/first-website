@@ -16,8 +16,8 @@
       #messages li:nth-child(odd) { background: #eee; }
       #fList {padding:5px 10px}
       #fList:nth-child(odd) {background: #eee}
-      #scroll {margin: 10px; left: 15%; position: relative; bottom: 50px; width: 80%; height:90%; overflow: auto; vertical-align: bottom;}
-      #friends{ border:1px solid black;  padding: 10px; position: absolute; left:0%; width: 15%; height: 100%; background: red }
+      #scroll {margin-top: 40px; background:red ;margin: 10px; left: 15%; position: absolute; bottom: 50px; width: 80%; height:90%; overflow: auto; vertical-align: bottom;}
+      #friends{ border:1px solid black;  padding: 10px; position: relative; left:0%; width: 15%; height: 100%; background: red }
   </style>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
@@ -61,6 +61,7 @@
         });
     
         socket.on('chat_message', function(msg, username){
+          console.log(msg); 
           var date =  new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
               var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() + ":" + date.getSeconds(); 
@@ -69,16 +70,18 @@
               elem.scrollTop = elem.scrollHeight; 
         });
 
+        socket.on('clear', function(){
+          document.getElementById('messages').innerHTML = "";
+        }); 
+
         // append text if someone is online
         socket.on('is_online', function(partner, name, firstData, secondData) {
-          
-        var firstDataU = [[]];
-        var secondDataU = [[]]; 
+         var firstDataU = [[]];
+         var secondDataU = [[]]; 
          for(var i = 0; i<firstData.length; i++) firstDataU.push([firstData[i], 1]); 
          for(var i = 0; i<secondData.length; i++) secondDataU.push([secondData[i], 0]);
          const username = [...firstDataU, ...secondDataU];  
 
-          console.log(username); 
           username.sort(function sort(a, b){
               if(a.length == 0) return 0; 
               if(b.length == 0) return 0; 
@@ -89,13 +92,12 @@
                   return (aDt < bDt) ? -1 : 1; 
               }
           });
-
           for(var i = 0; i<username.length; i++){
               if(username[i].length == 0) continue; 
               var date = new Date(username[i][0].dt); 
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
               var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes(); 
-              console.log(username[i][1]); 
+
               if(username[i][1] == 1) $('#messages').append('<li> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
               else $('#messages').append('<li> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
             }
@@ -105,7 +107,6 @@
         var username = ""; 
         socket.emit('username', username); 
         
-        //NEED to fix this?!?!
         socket.on('data', function(data){
           if(document.getElementById("fList").getElementsByTagName("ul").length < data.length){
             for(var i = 0; i<data.length; i++){
