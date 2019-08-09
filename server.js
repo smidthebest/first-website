@@ -127,13 +127,13 @@ var server = app.listen(8081, function () {
     socket.on('username', function(username) {
         users[finEmail] = socket;  
         socket.username = finEmail;
+        socket.emit('set_name', finEmail); 
         
     });
 
     socket.on('disconnect', function() {
-
-        console.log(socket.username); 
-        if(socket.username =="") return; 
+        if(socket.username =="" || socket.partner == "") return; 
+        users[socket.partner].emit('left', socket.username); 
          
     })
 

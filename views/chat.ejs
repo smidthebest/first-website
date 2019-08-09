@@ -59,6 +59,11 @@
           $('#txt').val('');
           return false;
         });
+        var name = ""; 
+        socket.on('set_name', function(username){
+          name = username; 
+          document.getElementById("txt").placeholder = name + " --> " + name; 
+        });
     
         socket.on('chat_message', function(msg, username){
           console.log(msg); 
@@ -73,6 +78,10 @@
         socket.on('clear', function(){
           document.getElementById('messages').innerHTML = "";
         }); 
+
+        socket.on('left', function(name){
+          $('#messages').append('<li> <em>' +username+ 'has disconnected. </em> </li>');
+        });
 
         // append text if someone is online
         socket.on('is_online', function(partner, name, firstData, secondData) {
@@ -134,6 +143,7 @@
         function setPartner(id){
           console.log("conected"); 
           socket.emit('found_part', id); 
+          document.getElementById("txt").placeholder = name  + " --> "  + id; 
         }
 
 
