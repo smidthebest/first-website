@@ -222,3 +222,245 @@ background-color: rgba(0,0,0,0.2);
 margin-bottom: 15px !important;
 }
 }
+
+.chatbar {
+  --primary: #275EFE;
+  --shadow: rgba(39, 94, 254, .2);
+  width: 276px;
+  position: relative;
+  padding: 20px;
+  border-radius: 42px;
+  background: var(--primary);
+  overflow: hidden;
+  -webkit-transform-origin: 42px 50%;
+          transform-origin: 42px 50%;
+  box-shadow: 0 32px 48px -8px var(--shadow);
+}
+.chatbar .control {
+  --rotate: 0deg;
+  position: relative;
+  -webkit-transform-origin: 22px 22px;
+          transform-origin: 22px 22px;
+  transition: -webkit-transform .45s ease;
+  transition: transform .45s ease;
+  transition: transform .45s ease, -webkit-transform .45s ease;
+  -webkit-transform: rotate(var(--rotate));
+          transform: rotate(var(--rotate));
+}
+.chatbar .control > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+.chatbar .control > a svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  color: #fff;
+}
+.chatbar .control .text,
+.chatbar .control .list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0 0 0 64px;
+  -webkit-transform-origin: 22px 50%;
+          transform-origin: 22px 50%;
+}
+.chatbar .control .text {
+  top: -4px;
+}
+.chatbar .control .text input {
+  line-height: 24px;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.2);
+  display: block;
+  color: #fff;
+  font-size: 18px;
+  outline: none;
+  width: 100%;
+}
+.chatbar .control .text input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+}
+.chatbar .control .text input:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+}
+.chatbar .control .text input::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+}
+.chatbar .control .text input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+}
+.chatbar .control .list {
+  margin: 0;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  -webkit-transform: rotate(135deg);
+          transform: rotate(135deg);
+}
+.chatbar .control .list li {
+  --y: 0;
+  transition: -webkit-transform 1s ease;
+  transition: transform 1s ease;
+  transition: transform 1s ease, -webkit-transform 1s ease;
+  -webkit-transform: translateY(var(--y));
+          transform: translateY(var(--y));
+}
+.chatbar .control .list li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+.chatbar .control .list li a svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: #fff;
+  stroke-linecap: round;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+.chatbar .control .list li:nth-child(2) {
+  --y: 8px;
+}
+.chatbar .control .list li:nth-child(3) {
+  --y: 16px;
+}
+.chatbar.active {
+  -webkit-animation: top 1s ease-in-out forwards;
+          animation: top 1s ease-in-out forwards;
+}
+.chatbar.active .control {
+  --rotate: -135deg;
+}
+.chatbar.active .control .list li {
+  --y: 0;
+}
+.chatbar.active.default {
+  -webkit-animation: down 1s ease-in-out forwards;
+          animation: down 1s ease-in-out forwards;
+}
+.chatbar.active.default .control {
+  --rotate: 0deg;
+}
+
+@-webkit-keyframes top {
+  0%,
+    100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  50%,
+    60% {
+    -webkit-transform: rotate(-6deg);
+            transform: rotate(-6deg);
+  }
+  88% {
+    -webkit-transform: rotate(1deg);
+            transform: rotate(1deg);
+  }
+}
+
+@keyframes top {
+  0%,
+    100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  50%,
+    60% {
+    -webkit-transform: rotate(-6deg);
+            transform: rotate(-6deg);
+  }
+  88% {
+    -webkit-transform: rotate(1deg);
+            transform: rotate(1deg);
+  }
+}
+@-webkit-keyframes down {
+  0%,
+    100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  50%,
+    60% {
+    -webkit-transform: rotate(6deg);
+            transform: rotate(6deg);
+  }
+  88% {
+    -webkit-transform: rotate(-1deg);
+            transform: rotate(-1deg);
+  }
+}
+@keyframes down {
+  0%,
+    100% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  50%,
+    60% {
+    -webkit-transform: rotate(6deg);
+            transform: rotate(6deg);
+  }
+  88% {
+    -webkit-transform: rotate(-1deg);
+            transform: rotate(-1deg);
+  }
+}
+html {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: inherit;
+}
+*:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  
+  align-items: center;
+  background: #E4ECFA;
+}
+body .dribbble {
+  position: fixed;
+  display: block;
+  right: 20px;
+  bottom: 20px;
+}
+body .dribbble img {
+  display: block;
+    width:500px;
+  height: 28px;
+}
+
+.bigger{
+    width:500px;
+}
+

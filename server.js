@@ -32,7 +32,7 @@ var con = mysql.createPool({
     connectionLimit: 10, 
     host: "localhost", 
     user: "root",
-    password: "Firstserver1",
+    password: "dashMarley7",
     database: "mydb"
 });
 

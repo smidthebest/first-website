@@ -1,141 +1,272 @@
-
 <!------ Include the above in your HEAD tag ---------->
 
 <!DOCTYPE html>
 <html>
-	<head>
+
+<head>
     <title>Chat</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form {margin: 10px;  left: 15%; background: #fff; padding: 3px; position: absolute; bottom: 0; width: 80%; border-color: #000; border-top-style: solid; border-top-width: 1px;}
-      form input { border-style: solid; border-width: 1px; padding: 10px; width: 85%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; margin-left: 2%; }
-      #messages {  list-style-type: none; margin: 0; padding: 0; vertical-align: bottom;}
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #fList {padding:5px 10px}
-      #fList:nth-child(odd) {background: #eee}
-      #scroll {margin-top: 40px; background:red ;margin: 10px; left: 15%; position: absolute; bottom: 50px; width: 80%; height:90%; overflow: auto; vertical-align: bottom;}
-      #friends{ border:1px solid black;  padding: 10px; position: relative; left:0%; width: 15%; height: 100%; background: red }
-  </style>
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
-    <link rel = "stylesheet" type = "text/css" href="chatstyles.css">
-	</head>
-    <body onload="checkFirstVisit()">
-      <div id="friends">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 13px Helvetica, Arial;
+        }
+
+        form {
+            margin: 10px;
+            left: 15%;
+            background: #fff;
+            padding: 3px;
+            position: absolute;
+            bottom: 0;
+            width: 80%;
+            border-color: #000;
+            border-top-style: solid;
+            border-top-width: 1px;
+        }
+
+        form input {
+            border-style: solid;
+            border-width: 1px;
+            padding: 10px;
+            width: 85%;
+            margin-right: .5%;
+        }
+
+        form button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+            margin-left: 2%;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            vertical-align: bottom;
+        }
+
+        #messages li {
+            padding: 5px 10px;
+        }
+
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+
+        #fList {
+            padding: 5px 10px
+        }
+
+        #fList:nth-child(odd) {
+            background: #eee
+        }
+
+        #scroll {
+            margin-top: 40px;
+            background: red;
+            margin: 10px;
+            left: 15%;
+            position: absolute;
+            bottom: 50px;
+            width: 80%;
+            height: 90%;
+            overflow: auto;
+            vertical-align: bottom;
+        }
+
+        #friends {
+            border: 1px solid black;
+            padding: 10px;
+            position: relative;
+            left: 0%;
+            width: 15%;
+            height: 100%;
+            background: red
+        }
+
+    </style>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="chatstyles.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body onload="checkFirstVisit()">
+    <div id="friends">
         <ul id="fList">
 
         </ul>
-      </div>
-      <div id = "scroll">
-        <ul id="messages" ></ul>
-      </div>
-      </div>
-        <form autocomplete="off" class="form-signin" id ="chatForm" action = "/chat.html" method = "GET">
-          <input autocomplete="false" id="txt" autocomplete="off" autofocus="on" placeholder="type your message here..." /><button>Send</button>        
+    </div>
+    <div id="scroll">
+        <ul id="messages"></ul>
+    </div>
+    <div>
+        <form autocomplete="off" class="form-signin" id="chatForm" action="/chat.html" method="GET">
+            <nav class="chatbar">
+                <div class="control">
+                    <a>
+                        <svg>
+                            <use xlink:href="#plus">
+                        </svg>
+                    </a>
+                    <div class="text">
+                        <input class = bigger autocomplete=false id=txt type="text" placeholder="Message">
+                    </div>
+                    <ul class="list">
+                        <li>
+                            <a href="">
+                                <svg>
+                                    <use xlink:href="#video">
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <svg>
+                                    <use xlink:href="#photo">
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <svg>
+                                    <use xlink:href="#image">
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
         </form>
-      </div>
-      
-      <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-      <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-      <script src ="ejs.min.js"></script>
-      <script type="text/javascript">
-          var elem = document.getElementById("scroll");
-          elem.scrollTop = elem.scrollHeight; 
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script src="ejs.min.js"></script>
+    <script type="text/javascript">
+        var elem = document.getElementById("scroll");
+        elem.scrollTop = elem.scrollHeight;
 
         var socket = io.connect();
-        $('form').submit(function(e){
-          e.preventDefault(); // prevents page reloading
-          console.log(Date.now()); 
-          socket.emit('chat_message', $('#txt').val(), );
-          $('#txt').val('');
-          return false;
-        });
-    
-        socket.on('chat_message', function(msg, username){
-          console.log(msg); 
-          var date =  new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
-              var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() + ":" + date.getSeconds(); 
-              $('#messages').append('<li> <strong>' +username+ '</strong> ' + useDate + ': ' + msg + '</li>');
-              var elem = document.getElementById("scroll");
-              elem.scrollTop = elem.scrollHeight; 
+        $('form').submit(function(e) {
+            e.preventDefault(); // prevents page reloading
+            console.log(Date.now());
+            socket.emit('chat_message', $('#txt').val(), );
+            $('#txt').val('');
+            return false;
         });
 
-        socket.on('clear', function(){
-          document.getElementById('messages').innerHTML = "";
-        }); 
+        socket.on('chat_message', function(msg, username) {
+            console.log(msg);
+            var date = new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+            $('#messages').append('<li> <strong>' + username + '</strong> ' + useDate + ': ' + msg + '</li>');
+            var elem = document.getElementById("scroll");
+            elem.scrollTop = elem.scrollHeight;
+        });
+
+        socket.on('clear', function() {
+            document.getElementById('messages').innerHTML = "";
+        });
 
         // append text if someone is online
         socket.on('is_online', function(partner, name, firstData, secondData) {
-         var firstDataU = [[]];
-         var secondDataU = [[]]; 
-         for(var i = 0; i<firstData.length; i++) firstDataU.push([firstData[i], 1]); 
-         for(var i = 0; i<secondData.length; i++) secondDataU.push([secondData[i], 0]);
-         const username = [...firstDataU, ...secondDataU];  
+            var firstDataU = [
+                []
+            ];
+            var secondDataU = [
+                []
+            ];
+            for (var i = 0; i < firstData.length; i++) firstDataU.push([firstData[i], 1]);
+            for (var i = 0; i < secondData.length; i++) secondDataU.push([secondData[i], 0]);
+            const username = [...firstDataU, ...secondDataU];
 
-          username.sort(function sort(a, b){
-              if(a.length == 0) return 0; 
-              if(b.length == 0) return 0; 
-              var aDt = new Date(a[0].dt); 
-              var bDt = new Date(b[0].dt); 
-              if(aDt == bDt) return 0; 
-              else {
-                  return (aDt < bDt) ? -1 : 1; 
-              }
-          });
-          for(var i = 0; i<username.length; i++){
-              if(username[i].length == 0) continue; 
-              var date = new Date(username[i][0].dt); 
-              var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes(); 
+            username.sort(function sort(a, b) {
+                if (a.length == 0) return 0;
+                if (b.length == 0) return 0;
+                var aDt = new Date(a[0].dt);
+                var bDt = new Date(b[0].dt);
+                if (aDt == bDt) return 0;
+                else {
+                    return (aDt < bDt) ? -1 : 1;
+                }
+            });
+            for (var i = 0; i < username.length; i++) {
+                if (username[i].length == 0) continue;
+                var date = new Date(username[i][0].dt);
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() + ":" + date.getMinutes();
 
-              if(username[i][1] == 1) $('#messages').append('<li> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
-              else $('#messages').append('<li> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
+                if (username[i][1] == 1) $('#messages').append('<li> <strong>' + name + '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
+                else $('#messages').append('<li> <strong>' + partner + '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
             }
         });
 
         // ask username
-        var username = ""; 
-        socket.emit('username', username); 
-        
-        socket.on('data', function(data){
-          if(document.getElementById("fList").getElementsByTagName("ul").length < data.length){
-            for(var i = 0; i<data.length; i++){
-              console.log(data[i].email); 
-              $('#fList').append("<ul id='" +data[i].email +  "' onclick='setPartner(this.id)'> " + data[i].email + "</ul>"); 
-            } 
-          }  
-        });   
+        var username = "";
+        socket.emit('username', username);
+
+        socket.on('data', function(data) {
+            if (document.getElementById("fList").getElementsByTagName("ul").length < data.length) {
+                for (var i = 0; i < data.length; i++) {
+                    console.log(data[i].email);
+                    $('#fList').append("<ul id='" + data[i].email + "' onclick='setPartner(this.id)'> " + data[i].email + "</ul>");
+                }
+            }
+        });
 
         function checkFirstVisit() {
-          if(document.cookie.indexOf('mycookie')==-1) {
-            // cookie doesn't exist, create it now
-            document.cookie = 'mycookie=1';
-          }
-          else {
-            
-            //trying to redirect to login page...
-            //this is a test to see if anything differehnt 
+            if (document.cookie.indexOf('mycookie') == -1) {
+                // cookie doesn't exist, create it now
+                document.cookie = 'mycookie=1';
+            } else {
+
+                //trying to redirect to login page...
+                //this is a test to see if anything differehnt 
+
+            }
+        }
+
+        function setPartner(id) {
+            console.log("conected");
+            socket.emit('found_part', id);
+        }
         
-          }
-        }
+        $('.chatbar .control > a').on('click touch', function(e) {
 
-        function setPartner(id){
-          console.log("conected"); 
-          socket.emit('found_part', id); 
-        }
+    e.preventDefault();
 
+    let parent = $(this).parent().parent();
+
+    if(parent.hasClass('active')) {
+        parent.addClass('default');
+        setTimeout(() => {
+            parent.removeClass('active default');
+        }, 1000);
+    } else {
+        parent.addClass('active');
+    }
+
+});
 
 
     </script>
-	</body>
+</body>
+
 </html>
