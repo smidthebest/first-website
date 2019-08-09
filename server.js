@@ -132,7 +132,8 @@ var server = app.listen(8081, function () {
     });
 
     socket.on('disconnect', function() {
-        if(socket.username =="" || socket.partner == "") return; 
+        console.log(socket.partner + " "  + socket.username); 
+        if(socket.username == null || socket.partner == null) return; 
         users[socket.partner].emit('left', socket.username); 
          
     })
@@ -140,6 +141,10 @@ var server = app.listen(8081, function () {
     socket.on('chat_message', function(message) {
         //io.emit('chat_message', message, socket.username);
         
+        if(socket.partner == ""){
+            socket.emit('no_partner'); 
+            return;
+        }
         if(users[socket.partner] != null && users[socket.partner].partner == socket.username) users[socket.partner].emit('chat_message', message, socket.username); 
         users[socket.username].emit('chat_message', message, socket.username);
         ///socket.msgs.push([message, new Date(Date.now())]); 

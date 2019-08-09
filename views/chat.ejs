@@ -13,8 +13,8 @@
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; margin-left: 2%; }
       #messages {  list-style-type: none; margin: 0; padding: 0; vertical-align: bottom;}
       #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
       #fList {padding:5px 10px}
+      #odd {background: #eee}
       #fList:nth-child(odd) {background: #eee}
       #scroll {margin-top: 40px; background:red ;margin: 10px; left: 15%; position: absolute; bottom: 50px; width: 80%; height:90%; overflow: auto; vertical-align: bottom;}
       #friends{ border:1px solid black;  padding: 10px; position: relative; left:0%; width: 15%; height: 100%; background: red }
@@ -54,19 +54,22 @@
         var socket = io.connect();
         $('form').submit(function(e){
           e.preventDefault(); // prevents page reloading
-          console.log(Date.now()); 
           socket.emit('chat_message', $('#txt').val(), );
           $('#txt').val('');
           return false;
         });
+
         var name = ""; 
         socket.on('set_name', function(username){
           name = username; 
-          document.getElementById("txt").placeholder = name + " --> " + name; 
+          document.getElementById("txt").placeholder = "Select a friend to send a message to..."; 
+        });
+
+        socket.on('no_partner', function(){
+           document.getElementById("txt").placeholder = "Select a friend to send a message to..."; 
         });
     
         socket.on('chat_message', function(msg, username){
-          console.log(msg); 
           var date =  new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
               var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() + ":" + date.getSeconds(); 
@@ -80,7 +83,7 @@
         }); 
 
         socket.on('left', function(name){
-          $('#messages').append('<li> <em>' +username+ 'has disconnected. </em> </li>');
+          $('#messages').append('<li> <em>' +name+ ' has disconnected. </em> </li>');
         });
 
         // append text if someone is online
@@ -89,18 +92,23 @@
          var secondDataU = [[]]; 
          for(var i = 0; i<firstData.length; i++) firstDataU.push([firstData[i], 1]); 
          for(var i = 0; i<secondData.length; i++) secondDataU.push([secondData[i], 0]);
-         const username = [...firstDataU, ...secondDataU];  
 
-          username.sort(function sort(a, b){
-              if(a.length == 0) return 0; 
-              if(b.length == 0) return 0; 
+         const username = firstDataU.concat(secondDataU);   
+         for(var i = 0; i<username.length; i++) if(username[i].length == 0) username.splice(i, 1); 
+          
+          username.sort(function (a, b){
+             
+              if(a == [] || b == []) return -1; 
+              
               var aDt = new Date(a[0].dt); 
               var bDt = new Date(b[0].dt); 
               if(aDt == bDt) return 0; 
               else {
+                  
                   return (aDt < bDt) ? -1 : 1; 
               }
           });
+          
           for(var i = 0; i<username.length; i++){
               if(username[i].length == 0) continue; 
               var date = new Date(username[i][0].dt); 
@@ -108,7 +116,7 @@
               var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() +":" + date.getSeconds(); 
 
               if(username[i][1] == 1) $('#messages').append('<li> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
-              else $('#messages').append('<li> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
+              else $('#messages').append('<li id ="odd"> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
             }
         });
 
@@ -141,12 +149,12 @@
         }
 
         function setPartner(id){
-          console.log("conected"); 
           socket.emit('found_part', id); 
           document.getElementById("txt").placeholder = name  + " --> "  + id; 
         }
 
 
+        
 
     </script>
 	</body>
