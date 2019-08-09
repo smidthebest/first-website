@@ -96,7 +96,7 @@
               if(username[i].length == 0) continue; 
               var date = new Date(username[i][0].dt); 
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes(); 
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() +":" + date.getSeconds(); 
 
               if(username[i][1] == 1) $('#messages').append('<li> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
               else $('#messages').append('<li> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
@@ -107,13 +107,15 @@
         var username = ""; 
         socket.emit('username', username); 
         
+        var names = [];
         socket.on('data', function(data){
-          if(document.getElementById("fList").getElementsByTagName("ul").length < data.length){
+          
             for(var i = 0; i<data.length; i++){
-              console.log(data[i].email); 
-              $('#fList').append("<ul id='" +data[i].email +  "' onclick='setPartner(this.id)'> " + data[i].email + "</ul>"); 
-            } 
-          }  
+              if(!names.includes(data[i].email)){
+                $('#fList').append("<ul id='" +data[i].email +  "' onclick='setPartner(this.id)'> " + data[i].email + "</ul>"); 
+                names.push(data[i].email); 
+              } 
+            }
         });   
 
         function checkFirstVisit() {
