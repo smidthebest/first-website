@@ -28,7 +28,7 @@ app.get('/signup.html', function(req, res) {
     res.sendFile(__dirname + "/signup.html"); 
 })
 
-var con = mysql.createPool({
+var pool = mysql.createPool({
     connectionLimit: 10, 
     host: "localhost", 
     user: "root",
@@ -43,7 +43,7 @@ app.get('/process_signup', function(req, res){
 
     response = "('" + email + "', '" + pass +"')";
 
-    con.getConnection(function(err){
+    pool.getConnection(function(err, con){
         if(err) throw err; 
         var sql = "INSERT INTO users (email, password) VALUES " + response;
         con.query("SELECT * FROM users WHERE email = '" + email +"'", function(err, result) {
@@ -66,6 +66,7 @@ app.get('/process_signup', function(req, res){
                 console.log("Username already exists. Please try a new one.");
             }
         })
+        con.release(); 
 
     })
 
@@ -81,7 +82,7 @@ app.get('/process_get', function (req, res) {
    response = "('" + req.query.first_name + "', '" + req.query.last_name +"')";
    
    var check = true;  
-   con.getConnection(function(err) {
+   pool.getConnection(function(err, con) {
     if (err) throw err;
     var sql = "INSERT INTO users (email, password) VALUES " + response;
     con.query("SELECT * FROM users WHERE email = '" + email +"'", function(err, result) {
@@ -104,7 +105,7 @@ app.get('/process_get', function (req, res) {
             console.log("You have not created an account"); 
         }
     });
-    
+    con.release(); 
   }); 
 
   
@@ -126,7 +127,6 @@ var server = app.listen(8081, function () {
     socket.on('username', function(username) {
         users[finEmail] = socket;  
         socket.username = finEmail;
-        socket.msgs = [];
         
     });
 
@@ -134,7 +134,7 @@ var server = app.listen(8081, function () {
 
         console.log(socket.username); 
         if(socket.username =="") return; 
-        processMsgs(socket.username, socket.msgs, socket.partner); 
+         
     })
 
     socket.on('chat_message', function(message) {
@@ -142,15 +142,16 @@ var server = app.listen(8081, function () {
         
         if(users[socket.partner] != null && users[socket.partner].partner == socket.username) users[socket.partner].emit('chat_message', message, socket.username); 
         users[socket.username].emit('chat_message', message, socket.username);
-        socket.msgs.push([message, new Date(Date.now())]); 
-        console.log("this is messages for " + socket.username + ": " + socket.msgs); 
+        ///socket.msgs.push([message, new Date(Date.now())]); 
+        processMsgs(socket.username, message, socket.partner); 
     });
 
     socket.on('found_part', function(username){
         users[socket.username].emit('clear'); 
         socket.partner = username; 
 
-        con.getConnection(function(err) {
+        
+        pool.getConnection(function(err, con) {
             if (err) throw err;
            
             var firstData = [];
@@ -168,38 +169,40 @@ var server = app.listen(8081, function () {
                 });
                
             });
+            con.release(); 
         }); 
         
     });
 
-    con.getConnection(function(err) {
+    
+    pool.getConnection(function(err, con) {
         if (err) throw err;
     
         con.query("SELECT email FROM users", function (err, result, fields) {
             if (err) throw err;
             io.emit('data', result); 
         });
+        con.release(); 
     }); 
 
  });
 
  function processMsgs(username, msgs, partner){
-    console.log( username  + " " + partner); 
-
-    con.getConnection(function(err) {
+    //console.log( username  + " " + partner); 
+    pool.getConnection(function(err, con) {
         if(err) throw err; 
-        for(var i = 0; i<msgs.length; i++){
-            console.log(username + " " + partner); 
-            msgs[i][0] = msgs[i].replace(/'/g, "''");
-            msgs[i][0] = msgs[i].replace(/"/g,'""' );
-             dt = msgs[i][1]; 
+       
+            //console.log(username + " " + partner); 
+            msgs = msgs.replace(/'/g, "''");
+            msgs = msgs.replace(/"/g,'""' );
             //var date = dt.getYear() + "-" + dt.getMonth() + "-" + dt.getDate() + "T" + dt.getHours() + ":"+dt.getMinutes()+":"+dt.geSeconds();
-            var sql = "INSERT INTO " + username + " ( name, data, dt) VALUES (1, '" + partner + "', '" + msgs[i] + "', '"+date + ")";
+            var sql = "INSERT INTO " + username + " ( name, data) VALUES ('" + partner + "', '" + msgs + "')";
             
             con.query(sql, function(err, result){
                 if (err) throw err; 
             });
-        }
+        
+        con.release(); 
     });
  }
  
