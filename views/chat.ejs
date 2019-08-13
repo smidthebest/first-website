@@ -64,7 +64,16 @@
             hours = hours-12; 
             am = "pm"
           }
-          var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + ":" + date.getSeconds() + " " + am ; 
+          var hourString = ""; 
+          if(hours <10){
+            hourString = "0"+hours; 
+          }
+          else hourString = ""+hours; 
+          var min = ""; 
+          if(date.getMinutes()<10) min = "0"+date.getMinutes(); 
+          else min = date.getMinutes(); 
+
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString +":" + min + " "  + am ; 
           $('#messages').append('<li><span id="opp"> <strong>' +name+ '</strong> ' + useDate + ': ' + $('#txt').val() + '</span></li>');
           $('#txt').val('');
           var elem = document.getElementById("scroll");
@@ -94,7 +103,16 @@
             hours = hours-12; 
             am = "pm"
           }
-          var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + " " + am ; 
+          var hourString = ""; 
+          if(hours <10){
+            hourString = "0"+hours; 
+          }
+          else hourString = ""+hours; 
+          var min = " "; 
+          if(date.getMinutes<10) min = "0"+date.getMinutes(); 
+              else min = date.getMinutes(); 
+
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString +":" + min + " "  + am ; 
           $('#messages').append('<li style="text-align:center"></li>');
           $('#messages').append('<li style="text-align:center">'+ useDate+ '</li>');
           $('#messages').append('<li style="text-align:center"></li>');
@@ -112,7 +130,16 @@
                 hours = hours-12; 
                 am = "pm"
               }
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + ":" + date.getSeconds() + " " + am ; 
+              var hourString = ""; 
+              if(hours <10){
+                hourString = "0"+hours; 
+              }
+              else hourString = ""+hours; 
+              var min = " "; 
+              if(date.getMinutes()<10) min = "0"+date.getMinutes(); 
+              else min = date.getMinutes(); 
+
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString +":" + min + " "  + am ; 
 
               if(tag == 1) $('#messages').append('<li><span id="opp"> <strong>' +username+ '</strong> ' + useDate + ': ' + msg + '</span></li>');
               else $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + username+ '</strong> ' + useDate + ': ' + msg + '</span></li>');
@@ -164,7 +191,18 @@
                 hours = hours-12; 
                 am = "pm"
               }
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + ":" + date.getSeconds() + " " + am ; 
+              
+              var hourString = ""; 
+              if(hours <10){
+                hourString = "0"+hours; 
+              }
+              else hourString = ""+hours; 
+
+              var min = " "; 
+              if(date.getMinutes()<10) min = "0"+date.getMinutes(); 
+              else min = date.getMinutes(); 
+
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString +":" + min + " "  + am ; 
 
               if(username[i][1] == 1) $('#messages').append('<li><span id="opp"> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');
               else $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');

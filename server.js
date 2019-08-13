@@ -52,7 +52,6 @@ app.get('/process_signup', function(req, res){
                 con.query(sql, function (err, result) {
                     if (err) throw err;
                 });
-                var querystring = encodeURIComponent(email); 
                 finEmail = email; 
                 con.query("CREATE TABLE mydb." +finEmail +" (num int, name varchar(255), data longtext, dt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)", function(err, result) {
                     if(err) throw err; 
@@ -93,7 +92,6 @@ app.get('/process_get', function (req, res) {
                 console.log("You inputed the wrong password."); 
             }
             else {
-                var querystring = encodeURIComponent(email); 
                 finEmail = email; 
                 res.redirect("chat.html"); 
                 /*
@@ -176,6 +174,7 @@ var server = app.listen(8081, function () {
                 firstData = result;
                 
                 var secondData = [];
+                //🔵
 
                 con.query("SELECT data, dt FROM " + socket.partner +" WHERE name ='" + socket.username+"'", function(err, result){
                     if(err) throw err; 
