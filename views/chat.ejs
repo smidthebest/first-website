@@ -225,7 +225,6 @@
         socket.on('data', function(data, username){
           
             for(var i = 0; i<data.length; i++){
-              console.log(username); 
               if(!names.includes(data[i].email) && data[i].email != username){
                 $('#fList').append("<ul id='" +data[i].email +  "' onclick='setPartner(this.id)'> " + data[i].email + "</ul>"); 
                 names.push(data[i].email); 
@@ -239,15 +238,10 @@
         });
 
         function checkFirstVisit() {
-          if(document.cookie.indexOf('mycookie')==-1) {
-            // cookie doesn't exist, create it now
-            document.cookie = 'mycookie=1';
-          }
-          else {
-            
-            //trying to redirect to login page...
-            //this is a test to see if anything differehnt 
-        
+          if (performance.navigation.type == 1) {
+            location.href = './login.html';
+          } else {
+            console.info( "This page is not reloaded");
           }
         }
 
