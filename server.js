@@ -154,8 +154,6 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on('chat_message', function(message) {
-		//io.emit('chat_message', message, socket.username);
-
 		if (socket.partner == "") {
 			socket.emit('no_partner');
 			return;
@@ -163,8 +161,6 @@ io.on("connection", function(socket) {
 		if (users[socket.partner] != null && users[socket.partner].partner == socket.username) {
 			users[socket.partner].emit('chat_message', message, socket.username, 0);
 		}
-		// users[socket.username].emit('chat_message', message, socket.username, 1);
-		///socket.msgs.push([message, new Date(Date.now())]); 
 		processMsgs(socket.username, message, socket.partner);
 	});
 
