@@ -129,11 +129,21 @@ var server = app.listen(8081, function () {
         socket.username = finEmail;
         socket.emit('set_name', finEmail); 
         
+        pool.getConnection(function(err, con) {
+            if (err) throw err;
+        
+            con.query("SELECT email FROM users", function (err, result, fields) {
+                if (err) throw err;
+                socket.emit('data', result, socket.username); 
+               
+            });
+            con.release(); 
+        }); 
+        
     });
 
     socket.on('disconnect', function() {
-        console.log(socket.partner + " "  + socket.username); 
-        if(socket.username == null || socket.partner == null) return; 
+        if(!(socket.partner in users)) return; 
         users[socket.partner].emit('left', socket.username); 
          
     })
@@ -145,8 +155,10 @@ var server = app.listen(8081, function () {
             socket.emit('no_partner'); 
             return;
         }
-        if(users[socket.partner] != null && users[socket.partner].partner == socket.username) users[socket.partner].emit('chat_message', message, socket.username); 
-        users[socket.username].emit('chat_message', message, socket.username);
+        if(users[socket.partner] != null && users[socket.partner].partner == socket.username) {
+            users[socket.partner].emit('chat_message', message, socket.username, 0); 
+        }
+       // users[socket.username].emit('chat_message', message, socket.username, 1);
         ///socket.msgs.push([message, new Date(Date.now())]); 
         processMsgs(socket.username, message, socket.partner); 
     });
@@ -154,7 +166,6 @@ var server = app.listen(8081, function () {
     socket.on('found_part', function(username){
         users[socket.username].emit('clear'); 
         socket.partner = username; 
-
         
         pool.getConnection(function(err, con) {
             if (err) throw err;
@@ -169,7 +180,9 @@ var server = app.listen(8081, function () {
                 con.query("SELECT data, dt FROM " + socket.partner +" WHERE name ='" + socket.username+"'", function(err, result){
                     if(err) throw err; 
                     secondData = result;                    
-                    users[socket.username].emit('is_online', username, finEmail, firstData, secondData);
+                    socket.emit('is_online', username, finEmail, firstData, secondData);
+                    socket.emit('update_time');
+                    if(socket.partner in users && users[socket.partner].partner == socket.username) users[socket.partner].emit("joined", socket.username); 
                     
                 });
                
@@ -177,30 +190,20 @@ var server = app.listen(8081, function () {
             con.release(); 
         }); 
         
+        
     });
 
     
-    pool.getConnection(function(err, con) {
-        if (err) throw err;
-    
-        con.query("SELECT email FROM users", function (err, result, fields) {
-            if (err) throw err;
-            io.emit('data', result); 
-        });
-        con.release(); 
-    }); 
+   
 
  });
 
  function processMsgs(username, msgs, partner){
-    //console.log( username  + " " + partner); 
     pool.getConnection(function(err, con) {
         if(err) throw err; 
        
-            //console.log(username + " " + partner); 
             msgs = msgs.replace(/'/g, "''");
             msgs = msgs.replace(/"/g,'""' );
-            //var date = dt.getYear() + "-" + dt.getMonth() + "-" + dt.getDate() + "T" + dt.getHours() + ":"+dt.getMinutes()+":"+dt.geSeconds();
             var sql = "INSERT INTO " + username + " ( name, data) VALUES ('" + partner + "', '" + msgs + "')";
             
             con.query(sql, function(err, result){

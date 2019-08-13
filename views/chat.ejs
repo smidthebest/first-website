@@ -14,9 +14,9 @@
       #messages {  list-style-type: none; margin: 0; padding: 0; vertical-align: bottom;}
       #messages li { padding: 5px 10px; }
       #fList {padding:5px 10px}
-      #odd {background: #eee}
+      #opp{}
       #fList:nth-child(odd) {background: #eee}
-      #scroll {margin-top: 40px; background:red ;margin: 10px; left: 15%; position: absolute; bottom: 50px; width: 80%; height:90%; overflow: auto; vertical-align: bottom;}
+      #scroll {margin-top: 40px; background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5); ;margin: 10px; left: 15%; position: absolute; bottom: 50px; width: 80%; height:90%; overflow: auto; vertical-align: bottom;}
       #friends{ border:1px solid black;  padding: 10px; position: relative; left:0%; width: 15%; height: 100%; background: red }
   </style>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -51,29 +51,72 @@
           var elem = document.getElementById("scroll");
           elem.scrollTop = elem.scrollHeight; 
 
+        //when someone hits submit. 
         var socket = io.connect();
         $('form').submit(function(e){
           e.preventDefault(); // prevents page reloading
           socket.emit('chat_message', $('#txt').val(), );
+          var date =  new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
+          var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          var hours = date.getHours(); 
+          var am = "am"; 
+          if(hours > 12){
+            hours = hours-12; 
+            am = "pm"
+          }
+          var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + ":" + date.getSeconds() + " " + am ; 
+          $('#messages').append('<li><span id="opp"> <strong>' +name+ '</strong> ' + useDate + ': ' + $('#txt').val() + '</span></li>');
           $('#txt').val('');
+          var elem = document.getElementById("scroll");
+          elem.scrollTop = elem.scrollHeight; 
           return false;
         });
 
+        //sets the name for that socket.
         var name = ""; 
         socket.on('set_name', function(username){
           name = username; 
           document.getElementById("txt").placeholder = "Select a friend to send a message to..."; 
         });
 
+        //alerts them that user has left 
         socket.on('no_partner', function(){
            document.getElementById("txt").placeholder = "Select a friend to send a message to..."; 
         });
+
+        //  update time when user connects.
+        socket.on('update_time', function(){
+          var date =  new Date(Date.now());
+          var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          var hours = date.getHours(); 
+          var am = "am"; 
+          if(hours > 12){
+            hours = hours-12; 
+            am = "pm"
+          }
+          var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + " " + am ; 
+          $('#messages').append('<li style="text-align:center"></li>');
+          $('#messages').append('<li style="text-align:center">'+ useDate+ '</li>');
+          $('#messages').append('<li style="text-align:center"></li>');
+          var elem = document.getElementById("scroll");
+          elem.scrollTop = elem.scrollHeight; 
+          
+        });
     
-        socket.on('chat_message', function(msg, username){
+        socket.on('chat_message', function(msg, username, tag){
           var date =  new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() + ":" + date.getSeconds(); 
-              $('#messages').append('<li> <strong>' +username+ '</strong> ' + useDate + ': ' + msg + '</li>');
+              var hours = date.getHours(); 
+              var am = "am"; 
+              if(hours > 12){
+                hours = hours-12; 
+                am = "pm"
+              }
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + ":" + date.getSeconds() + " " + am ; 
+
+              if(tag == 1) $('#messages').append('<li><span id="opp"> <strong>' +username+ '</strong> ' + useDate + ': ' + msg + '</span></li>');
+              else $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + username+ '</strong> ' + useDate + ': ' + msg + '</span></li>');
+              
               var elem = document.getElementById("scroll");
               elem.scrollTop = elem.scrollHeight; 
         });
@@ -84,6 +127,8 @@
 
         socket.on('left', function(name){
           $('#messages').append('<li> <em>' +name+ ' has disconnected. </em> </li>');
+          var elem = document.getElementById("scroll");
+          elem.scrollTop = elem.scrollHeight; 
         });
 
         // append text if someone is online
@@ -113,22 +158,38 @@
               if(username[i].length == 0) continue; 
               var date = new Date(username[i][0].dt); 
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + date.getHours() +":" + date.getMinutes() +":" + date.getSeconds(); 
+              var hours = date.getHours(); 
+              var am = "am"; 
+              if(hours > 12){
+                hours = hours-12; 
+                am = "pm"
+              }
+              var useDate = "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hours +":" + date.getMinutes() + ":" + date.getSeconds() + " " + am ; 
 
-              if(username[i][1] == 1) $('#messages').append('<li> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
-              else $('#messages').append('<li id ="odd"> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</li>');
+              if(username[i][1] == 1) $('#messages').append('<li><span id="opp"> <strong>' +name+ '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');
+              else $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + partner+ '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');
+              
             }
+            var elem = document.getElementById("scroll");
+            elem.scrollTop = elem.scrollHeight; 
         });
+
+        socket.on("joined", function(partner){
+          $('#messages').append('<li> <em>' +partner+ ' has connected. </em> </li>');
+          var elem = document.getElementById("scroll");
+          elem.scrollTop = elem.scrollHeight; 
+        }); 
 
         // ask username
         var username = ""; 
         socket.emit('username', username); 
         
         var names = [];
-        socket.on('data', function(data){
+        socket.on('data', function(data, username){
           
             for(var i = 0; i<data.length; i++){
-              if(!names.includes(data[i].email)){
+              console.log(username); 
+              if(!names.includes(data[i].email) && data[i].email != username){
                 $('#fList').append("<ul id='" +data[i].email +  "' onclick='setPartner(this.id)'> " + data[i].email + "</ul>"); 
                 names.push(data[i].email); 
               } 
@@ -148,8 +209,19 @@
           }
         }
 
+        var prev = "";
         function setPartner(id){
+          if(id == name) {
+            alert("You have to select a friend to send a message to!"); 
+            return; 
+          }
+          if(document.getElementById(prev) != null) {
+            document.getElementById(prev).style = "color: black";
+            
+          }
           socket.emit('found_part', id); 
+          prev = id; 
+          document.getElementById(id).style = "background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);";
           document.getElementById("txt").placeholder = name  + " --> "  + id; 
         }
 
