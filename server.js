@@ -123,7 +123,14 @@ var server = app.listen(8081, function () {
  var io = require('socket.io').listen(server); 
  io.on("connection", function(socket) {
     socket.on('username', function(username) {
+        const keys = Object.keys(users); 
+        if(keys.includes(finEmail)){
+            socket.emit("redirect"); 
+            return; 
+        }
         users[finEmail] = socket;  
+        
+        
         socket.username = finEmail;
         socket.emit('set_name', finEmail); 
         
@@ -141,10 +148,13 @@ var server = app.listen(8081, function () {
     });
 
     socket.on('disconnect', function() {
-        if(!(socket.partner in users)) return; 
+        if(!(socket.partner in users)){
+            delete users[socket.username];
+            return; 
+        } 
         users[socket.partner].emit('left', socket.username); 
-         
-    })
+        delete users[socket.username];    
+    });
 
     socket.on('chat_message', function(message) {
         //io.emit('chat_message', message, socket.username);

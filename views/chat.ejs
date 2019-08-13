@@ -46,7 +46,6 @@
       
       <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
       <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-      <script src ="ejs.min.js"></script>
       <script type="text/javascript">
           var elem = document.getElementById("scroll");
           elem.scrollTop = elem.scrollHeight; 
@@ -232,7 +231,12 @@
                 names.push(data[i].email); 
               } 
             }
-        });   
+        });  
+        
+        socket.on('redirect', function(){
+          alert("You are already logged in!"); 
+          location.href = './login.html';
+        });
 
         function checkFirstVisit() {
           if(document.cookie.indexOf('mycookie')==-1) {
