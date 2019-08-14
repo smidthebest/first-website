@@ -36,8 +36,10 @@
 	</head>
     <body onload="checkFirstVisit()">
 
-     <div class="moveTop scroll" id="friends" class ='bigger'>   
+     <div class="moveTop scroll" id="friends" class ='bigger'> 
+         
 <nav class="navbar navbar-inverse sidebar scroll" role="navigation">
+    
     <div class="container-fluid ">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
@@ -48,6 +50,7 @@
 				<span class="icon-bar"></span>
 			</button>
 			<a class="navbar-brand" href="#">Friends</a>
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
 		</div>
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class=" collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
@@ -317,6 +320,30 @@
   			htmlbodyHeightUpdate()
 		});
 	});
+          
+          
+          
+          
+          
+function myFunction() {
+  // Declare variables
+  var input, filter, ul, li, a, i, txtValue;
+  input = document.getElementById('myInput');
+  filter = input.value.toUpperCase();
+  ul = document.getElementById("fList");
+  li = ul.getElementsByTagName('li');
+
+  // Loop through all list items, and hide those who don't match the search query
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName("a")[0];
+    txtValue = a.textContent || a.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
 
     </script>
 	</body>
