@@ -409,5 +409,42 @@ button:focus {
 }
 
 .lighten{
-    color:#2A6496; 
+    font-size: 15px;
+    color: #6495ed
+}
+
+.scroll{
+    overflow: auto;
+    height:800px;
+    padding-bottom: 120px;
+}
+
+
+
+
+
+#myInput {
+  background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  width: 100%; /* Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 5px 5px 5px 15px; /* Add some padding */
+  border: 1px solid #ddd; /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
+}
+
+#fList {
+  /* Remove default list styling */
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.centerText{
+    text-align: left;
+}
+
+.centerText::placeholder{
+    text-align: left;
 }
