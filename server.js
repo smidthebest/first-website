@@ -31,14 +31,18 @@ app.get('/signup.html', function(req, res) {
     res.sendFile(__dirname + "/signup.html"); 
 })
 
-var pool = mysql.createPool({
-    connectionLimit: 10, 
-    host: "localhost", 
-    user: "root",
-    password: "dashMarley7",
-    database: "mydb"
-});
 
+var pool = mysql.createPool({
+    connectionLimit: 10,
+    connectTimeout  : 60 * 60 * 1000,
+    aquireTimeout   : 60 * 60 * 1000,
+    timeout         : 60 * 60 * 1000,
+	host: "database-1.ccgm7f9goesu.us-west-1.rds.amazonaws.com",
+	user: "admin",
+	password: "siddhartha",
+    database: "mydb",
+    port: 3306
+});
 
 app.get('/process_signup', function(req, res){
     var email = req.query.first_name; 
