@@ -31,6 +31,16 @@ app.get('/signup.html', function(req, res) {
     res.sendFile(__dirname + "/signup.html"); 
 })
 
+app.get('/loginicp.html', function(req,res){
+    res.sendFile(__dirname + "/loginicp.html"); 
+});
+app.get('/signupaae.html', function(req, res){
+    res.sendFile(__dirname + "/signupaae.html"); 
+});
+app.get('/loginade.html', function(req, res){
+    res.sendFile(__dirname + "/loginade.html"); 
+});
+
 
 var pool = mysql.createPool({
     connectionLimit: 10,
@@ -69,7 +79,7 @@ app.get('/process_signup', function(req, res){
             }
             else {
                 
-                console.log("Username already exists. Please try a new one.");
+                res.redirect("signupaae.html"); 
             }
         })
         con.release(); 
@@ -96,7 +106,7 @@ app.get('/process_get', function (req, res) {
         if(result.length != 0) {
             
             if(result[0].password != pass){
-                console.log("You inputed the wrong password."); 
+                res.redirect("loginicp.html"); 
             }
             else {
                 finEmail = email; 
@@ -107,7 +117,7 @@ app.get('/process_get', function (req, res) {
             }
         }
         else{
-            console.log("You have not created an account"); 
+            res.redirect("loginade.html"); 
         }
     });
     con.release(); 
