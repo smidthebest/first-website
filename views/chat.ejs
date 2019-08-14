@@ -148,20 +148,11 @@
             e.preventDefault(); // prevents page reloading
             socket.emit('chat_message', $('#txt').val(), );
             var date = new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
-            var useDate = createDate(date);; 
-            if(lastMes == null || date - lastMes > 5*60*1000){
-               $('#messages').append('<li></li>');
-               $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
-               $('#messages').append('<li></li>');
-
-            }     
-            useDate = instantDate(date);        
-            $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count + ',"' + name +'","' + useDate+ '","' +  $('#txt').val() +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + $('#txt').val() + '</span></li>');
+            appendMes(name, date, $('#txt').val(), 0); 
             $('#txt').val('');
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
-            lastMes = date; 
-            count++; 
+            
             return false;
         });
 
@@ -179,21 +170,10 @@
 
         socket.on('chat_message', function(msg, username) {
             var date = new Date(Date.now());
-            var useDate = createDate(date);
-            if(lastMes == null || date - lastMes > 5*60*1000){
-               
-               $('#messages').append('<li></li>');
-               $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
-               $('#messages').append('<li></li>');
-
-            }        
-            useDate = instantDate(date); 
-            $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count + ',"' + username +'","' + useDate+ '","' +  msg +'")\' style="text-align:right"><span id="opp"> <strong>' + username + '</strong> '  + ': ' + msg + '</span></li>');
-
+            appendMes(username, date, msg, 1);      
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
-            lastMes = date; 
-            count++;
+            
         });
 
         socket.on('clear', function() {
@@ -237,24 +217,30 @@
             for (var i = 0; i < username.length; i++) {
                 if (username[i].length == 0) continue;
                 var date = new Date(username[i][0].dt);
-                date.setTime(date.getTime() - (7 * 60 * 60 * 1000));
-                var useDate = createDate(date);
-                if(lastMes == null || date - lastMes > 5*60*1000){
-
-                  $('#messages').append('<li></li>');
-                  $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
-                  $('#messages').append('<li></li>');
-
-                }        
-                useDate = instantDate(date); 
-                if (username[i][1] == 1) $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  username[i][0].data +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + username[i][0].data + '</span></li>');
-                else $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count+',"' + partner +'","' + useDate+ '","' +  username[i][0].data +'")\' style="text-align:right"><span id="opp"> <strong>' + partner + '</strong> ' + ': ' + username[i][0].data + '</span></li>');
-                lastMes = date; 
-                count++; 
+                   
+                if (username[i][1] == 1) appendMes(name, date, username[i][0].data, 0); 
+                else appendMes(partner, date, username[i][0].data, 1); 
+                 
             }
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
+           
         });
+
+        function appendMes(name, date, msg, dir){
+            var useDate = createDate(date); 
+            if(lastMes == null || date - lastMes > 5*60*1000){
+                $('#messages').append('<li></li>');
+                $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
+                $('#messages').append('<li></li>');
+            }  
+            if(dir == 0) $('#messages').append('<li id = "'+ count+ '" onmouseleave=\'showMes('+ count + ',"' + name + '","' + msg + '")\' onmouseover =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  msg +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + msg + '</span></li>');
+            else $('#messages').append('<li style="text-align:right" id = "'+ count+ '" onmouseleave=\'showMes('+ count + ',"' + name + '","' + msg + '")\' onmouseover =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  msg +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + msg + '</span></li>');
+
+            lastMes = date; 
+            count++; 
+
+        }
 
         socket.on("joined", function(partner) {
             $('#messages').append('<li> <em>' + partner + ' has connected. </em> </li>');
@@ -339,27 +325,6 @@
             document.getElementById("txt").placeholder = name + " --> " + id;
         }
 
-        function instantDate(date){
-          var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            var hours = date.getHours();
-            var am = "am";
-            if (hours > 12) {
-                hours = hours - 12;
-                am = "pm"
-            }
-
-            var hourString = "";
-            if (hours < 10) {
-                hourString = "0" + hours;
-            } else hourString = "" + hours;
-
-            var min = " ";
-            if (date.getMinutes() < 10) min = "0" + date.getMinutes();
-            else min = date.getMinutes();
-
-            return "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString +  " " + am;
-
-        }
 
         function createDate(date) {
             var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -381,6 +346,11 @@
 
             return "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString + ":" + min + " " + am;
 
+        }
+
+        function showMes(count, name, msg){
+            console.log(count + " "  +  name + " " + msg); 
+            document.getElementById(count).innerHTML = '<span id="opp"> <strong>' + name + '</strong> '  + ': ' + msg + '</span>'; 
         }
 
         function showDate(count, recep, date, msg){
