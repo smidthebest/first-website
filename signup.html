@@ -36,20 +36,20 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-user"></i></span>
 						</div>
-						<input type="text" class="form-control" placeholder="username" name = first_name>
+						<input id="my-field" required="required" maxlength='8' type="text" class="form-control" placeholder="username" name = first_name>
 						
 					</div>
 					<div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-key"></i></span>
 						</div>
-						<input type="password" class="form-control" placeholder="password" name =last_name>
+						<input id="my-field" required="required" maxlength='50' type="password" class="form-control" placeholder="password" name =last_name>
 					</div>
 					<div class="row align-items-center remember">
 						
 					</div>
 					<div class="form-group">
-						<input type="submit" value="Signup" class="btn float-right login_btn">
+						<input type="submit" value="Sign Up" class="btn float-right login_btn">
 					</div>
 						
 				</form>
@@ -57,5 +57,15 @@
 		</div>
 	</div>
 </div>
+    
+    <script>
+    function testInput(event) {
+   var value = String.fromCharCode(event.which);
+   var pattern = new RegExp(/[a-zåäö ]/i);
+   return pattern.test(value);
+}
+
+$('#my-field').bind('keypress', testInput);
+    </script>
 </body>
 </html>
