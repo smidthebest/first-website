@@ -222,7 +222,6 @@ io.on("connection", function(socket) {
                     if (err) throw err;
                     secondData = result;
                     socket.emit('is_online', username, socket.username, firstData, secondData);
-                    socket.emit('update_time');
                     if (socket.partner in users && users[socket.partner].partner == socket.username) users[socket.partner].emit("joined", socket.username);
                 });
             });

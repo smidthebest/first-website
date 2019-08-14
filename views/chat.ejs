@@ -78,6 +78,7 @@
             overflow: auto;
             vertical-align: bottom;
         }
+        
     </style>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
@@ -138,16 +139,27 @@
         elem.scrollTop = elem.scrollHeight;
 
         //when someone hits submit. 
+        var lastMes; 
+        var count = 0; 
         var socket = io.connect();
         $('form').submit(function(e) {
             e.preventDefault(); // prevents page reloading
             socket.emit('chat_message', $('#txt').val(), );
             var date = new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
-            var useDate = createDate(date);
-            $('#messages').append('<li><span id="opp"> <strong>' + name + '</strong> ' + useDate + ': ' + $('#txt').val() + '</span></li>');
+            var useDate = createDate(date);; 
+            if(lastMes == null || date - lastMes > 5*60*1000){
+               $('#messages').append('<li></li>');
+               $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
+               $('#messages').append('<li></li>');
+
+            }     
+            useDate = instantDate(date);        
+            $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count + ',"' + name +'","' + useDate+ '","' +  $('#txt').val() +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + $('#txt').val() + '</span></li>');
             $('#txt').val('');
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
+            lastMes = date; 
+            count++; 
             return false;
         });
 
@@ -163,25 +175,23 @@
             document.getElementById("txt").placeholder = "Select a friend to send a message to...";
         });
 
-        //  update time when user connects.
-        socket.on('update_time', function() {
-            var date = new Date(Date.now());
-            var useDate = createDate(date);
-            $('#messages').append('<li style="text-align:center"></li>');
-            $('#messages').append('<li style="text-align:center">' + useDate + '</li>');
-            $('#messages').append('<li style="text-align:center"></li>');
-            var elem = document.getElementById("scroll");
-            elem.scrollTop = elem.scrollHeight;
-
-        });
-
         socket.on('chat_message', function(msg, username) {
             var date = new Date(Date.now());
             var useDate = createDate(date);
-            $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + username + '</strong> ' + useDate + ': ' + msg + '</span></li>');
+            if(lastMes == null || date - lastMes > 5*60*1000){
+               
+               $('#messages').append('<li></li>');
+               $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
+               $('#messages').append('<li></li>');
+
+            }        
+            useDate = instantDate(date); 
+            $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count + ',"' + username +'","' + useDate+ '","' +  msg +'")\' style="text-align:right"><span id="opp"> <strong>' + username + '</strong> '  + ': ' + msg + '</span></li>');
 
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
+            lastMes = date; 
+            count++;
         });
 
         socket.on('clear', function() {
@@ -227,9 +237,18 @@
                 var date = new Date(username[i][0].dt);
                 date.setTime(date.getTime() - (7 * 60 * 60 * 1000));
                 var useDate = createDate(date);
-                if (username[i][1] == 1) $('#messages').append('<li><span id="opp"> <strong>' + name + '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');
-                else $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + partner + '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');
+                if(lastMes == null || date - lastMes > 5*60*1000){
 
+                  $('#messages').append('<li></li>');
+                  $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
+                  $('#messages').append('<li></li>');
+
+                }        
+                useDate = instantDate(date); 
+                if (username[i][1] == 1) $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  username[i][0].data +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + username[i][0].data + '</span></li>');
+                else $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count+',"' + partner +'","' + useDate+ '","' +  username[i][0].data +'")\' style="text-align:right"><span id="opp"> <strong>' + partner + '</strong> ' + ': ' + username[i][0].data + '</span></li>');
+                lastMes = date; 
+                count++; 
             }
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
@@ -318,6 +337,28 @@
             document.getElementById("txt").placeholder = name + " --> " + id;
         }
 
+        function instantDate(date){
+          var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var hours = date.getHours();
+            var am = "am";
+            if (hours > 12) {
+                hours = hours - 12;
+                am = "pm"
+            }
+
+            var hourString = "";
+            if (hours < 10) {
+                hourString = "0" + hours;
+            } else hourString = "" + hours;
+
+            var min = " ";
+            if (date.getMinutes() < 10) min = "0" + date.getMinutes();
+            else min = date.getMinutes();
+
+            return "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString +  " " + am;
+
+        }
+
         function createDate(date) {
             var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             var hours = date.getHours();
@@ -338,6 +379,10 @@
 
             return "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString + ":" + min + " " + am;
 
+        }
+
+        function showDate(count, recep, date, msg){
+          document.getElementById(count).innerHTML = '<span id="opp"> <strong>' + recep + '</strong> ' + date + ': ' + msg + '</span>'; 
         }
 
 
