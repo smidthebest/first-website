@@ -143,7 +143,7 @@
             e.preventDefault(); // prevents page reloading
             socket.emit('chat_message', $('#txt').val(), );
             var date = new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
-            var useDate = createDate(date); 
+            var useDate = createDate(date);
             $('#messages').append('<li><span id="opp"> <strong>' + name + '</strong> ' + useDate + ': ' + $('#txt').val() + '</span></li>');
             $('#txt').val('');
             var elem = document.getElementById("scroll");
@@ -166,7 +166,7 @@
         //  update time when user connects.
         socket.on('update_time', function() {
             var date = new Date(Date.now());
-            var useDate = createDate(date); 
+            var useDate = createDate(date);
             $('#messages').append('<li style="text-align:center"></li>');
             $('#messages').append('<li style="text-align:center">' + useDate + '</li>');
             $('#messages').append('<li style="text-align:center"></li>');
@@ -176,8 +176,8 @@
         });
 
         socket.on('chat_message', function(msg, username) {
-            var date = new Date(Date.now()); 
-            var useDate = createDate(date); 
+            var date = new Date(Date.now());
+            var useDate = createDate(date);
             $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + username + '</strong> ' + useDate + ': ' + msg + '</span></li>');
 
             var elem = document.getElementById("scroll");
@@ -226,7 +226,7 @@
                 if (username[i].length == 0) continue;
                 var date = new Date(username[i][0].dt);
                 date.setTime(date.getTime() - (7 * 60 * 60 * 1000));
-                var useDate = createDate(date); 
+                var useDate = createDate(date);
                 if (username[i][1] == 1) $('#messages').append('<li><span id="opp"> <strong>' + name + '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');
                 else $('#messages').append('<li style="text-align:right"><span id="opp"> <strong>' + partner + '</strong> ' + useDate + ': ' + username[i][0].data + '</span></li>');
 
@@ -250,46 +250,41 @@
 
             for (var i = 1; i < data.length; i++) {
                 if (!names.includes(data[i][0]) && data[i][0] != username) {
-                  if(data[i][1] == 1) $('#fList').append("<li id = '" + data[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + data[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
-                  else  $('#fList').append("<li id = '" + data[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + data[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
- 
-                  names.push([data[i][0], data[i][1]]);
+                    if (data[i][1] == 1) $('#fList').append("<li id = '" + data[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + data[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
+                    else $('#fList').append("<li id = '" + data[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + data[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
 
-                    //<ul id='" +data[i].email +  "' onclick='setPartner(this.id)'> " + data[i].email + "</ul>
+                    names.push([data[i][0], data[i][1]]);
 
-                    //<li ><a href="#">Profile<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
                 }
             }
         });
 
-        socket.on('logged_on', function(username){
-          
-          document.getElementById("fList").innerHTML = ""; 
-          console.log(names);
-          for (var i = 0; i < names.length; i++) {
-             
-              if(names[i][0] == username) { 
-                $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
-                names[i][1] = 1; 
-              }
-              else if(names[i][1] == 1) $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
-              else  $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
-            
+        socket.on('logged_on', function(username) {
+
+            document.getElementById("fList").innerHTML = "";
+            console.log(names);
+            for (var i = 0; i < names.length; i++) {
+
+                if (names[i][0] == username) {
+                    $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
+                    names[i][1] = 1;
+                } else if (names[i][1] == 1) $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
+                else $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
+
             }
         });
 
-        socket.on('logged_off', function(username){
-          document.getElementById("fList").innerHTML = ""; 
-          console.log(names);
-          for (var i = 0; i < names.length; i++) {
-             
-              if(names[i][0] == username) { 
-                $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
-                names[i][1] = 0; 
-              }
-              else if(names[i][1] == 1) $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
-              else  $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
-            
+        socket.on('logged_off', function(username) {
+            document.getElementById("fList").innerHTML = "";
+            console.log(names);
+            for (var i = 0; i < names.length; i++) {
+
+                if (names[i][0] == username) {
+                    $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
+                    names[i][1] = 0;
+                } else if (names[i][1] == 1) $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + " 🔵 <span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
+                else $('#fList').append("<li id = '" + names[i][0] + "' class ='bigger' onclick='setPartner(this.id)'> <a href = '#'>" + names[i][0] + "<span style='font-size:16px;' class='pull-right hidden-xs showopacity glyphicon glyphicon-user'></span></a></li>");
+
             }
         });
 
@@ -323,25 +318,25 @@
             document.getElementById("txt").placeholder = name + " --> " + id;
         }
 
-        function createDate(date){
-          var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-          var hours = date.getHours();
-          var am = "am";
-          if (hours > 12) {
-              hours = hours - 12;
-              am = "pm"
-          }
+        function createDate(date) {
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var hours = date.getHours();
+            var am = "am";
+            if (hours > 12) {
+                hours = hours - 12;
+                am = "pm"
+            }
 
-          var hourString = "";
-          if (hours < 10) {
-              hourString = "0" + hours;
-          } else hourString = "" + hours;
+            var hourString = "";
+            if (hours < 10) {
+                hourString = "0" + hours;
+            } else hourString = "" + hours;
 
-          var min = " ";
-          if (date.getMinutes() < 10) min = "0" + date.getMinutes();
-          else min = date.getMinutes();
+            var min = " ";
+            if (date.getMinutes() < 10) min = "0" + date.getMinutes();
+            else min = date.getMinutes();
 
-          return  "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString + ":" + min + " " + am;
+            return "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString + ":" + min + " " + am;
 
         }
 
