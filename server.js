@@ -135,19 +135,32 @@ var server = app.listen(8081, function () {
             socket.emit("redirect"); 
             return; 
         }
+        
+        keys.forEach(function(key){
+            users[key].emit('logged_on', finEmail); 
+        });
+
         users[finEmail] = socket;  
-        
-        
         socket.username = finEmail;
-        
         socket.emit('set_name', finEmail); 
         
         pool.getConnection(function(err, con) {
             if (err) throw err;
         
-            con.query("SELECT email FROM users", function (err, result, fields) {
+            con.query("SELECT email FROM users", function (err, result) {
                 if (err) throw err;
-                socket.emit('data', result, socket.username); 
+                var temp = [
+                    []
+                ];
+                for(var i = 0; i<result.length; i++){
+                    if(Object.keys(users).includes(result[i].email)){
+                        temp.push([result[i].email, 1]); 
+                    }
+                    else{
+                        temp.push([result[i].email, 0]); 
+                    }
+                }
+                socket.emit('data', temp, socket.username); 
                
             });
             con.release(); 
@@ -158,24 +171,29 @@ var server = app.listen(8081, function () {
     socket.on('disconnect', function() {
         if(!(socket.partner in users)){
             delete users[socket.username];
+            
+            Object.keys(users).forEach(function(key){
+                users[key].emit('logged_off', socket.username); 
+            });
             return; 
         } 
+
         users[socket.partner].emit('left', socket.username); 
         delete users[socket.username];    
+        Object.keys(users).forEach(function(key){
+            users[key].emit('logged_off', socket.username); 
+        });
     });
 
-    socket.on('chat_message', function(message) {
-        //io.emit('chat_message', message, socket.username);
-        
+    socket.on('chat_message', function(message) {        
         if(socket.partner == ""){
             socket.emit('no_partner'); 
             return;
         }
         if(users[socket.partner] != null && users[socket.partner].partner == socket.username) {
-            users[socket.partner].emit('chat_message', message, socket.username, 0); 
+            users[socket.partner].emit('chat_message', message, socket.username); 
         }
-       // users[socket.username].emit('chat_message', message, socket.username, 1);
-        ///socket.msgs.push([message, new Date(Date.now())]); 
+       
         processMsgs(socket.username, message, socket.partner); 
     });
 
