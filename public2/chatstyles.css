@@ -1,9 +1,9 @@
 body,html{
     height: 100%;
     margin: 0;
-    background: #7F7FD5;
+    background: #e74c3c;
    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background-color: #e74c3c;
 }
 
 .chat{
@@ -223,244 +223,311 @@ margin-bottom: 15px !important;
 }
 }
 
-.chatbar {
-  --primary: #275EFE;
-  --shadow: rgba(39, 94, 254, .2);
-  width: 276px;
-  position: relative;
-  padding: 20px;
-  border-radius: 42px;
-  background: var(--primary);
-  overflow: hidden;
-  -webkit-transform-origin: 42px 50%;
-          transform-origin: 42px 50%;
-  box-shadow: 0 32px 48px -8px var(--shadow);
+
+.round{
+    border-radius: 25px;
 }
-.chatbar .control {
-  --rotate: 0deg;
-  position: relative;
-  -webkit-transform-origin: 22px 22px;
-          transform-origin: 22px 22px;
-  transition: -webkit-transform .45s ease;
-  transition: transform .45s ease;
-  transition: transform .45s ease, -webkit-transform .45s ease;
-  -webkit-transform: rotate(var(--rotate));
-          transform: rotate(var(--rotate));
+
+
+
+
+
+ body,html{
+		height: 100%;
+	}
+
+	/* remove outer padding */
+	.main .row{
+		padding: 0px;
+		margin: 0px;
+	}
+
+	/*Remove rounded coners*/
+
+	nav.sidebar.navbar {
+		border-radius: 25px;
+	}
+
+	nav.sidebar, .main{
+		-webkit-transition: margin 200ms ease-out;
+	    -moz-transition: margin 200ms ease-out;
+	    -o-transition: margin 200ms ease-out;
+	    transition: margin 200ms ease-out;
+	}
+
+	/* Add gap to nav and right windows.*/
+	.main{
+		padding: 10px 10px 0 10px;
+	}
+
+	/* .....NavBar: Icon only with coloring/layout.....*/
+
+	/*small/medium side display*/
+	@media (min-width: 768px) {
+
+		/*Allow main to be next to Nav*/
+		.main{
+			position: absolute;
+			width: calc(100% - 40px); /*keeps 100% minus nav size*/
+			margin-left: 40px;
+			float: right;
+		}
+
+		/*lets nav bar to be showed on mouseover*/
+		nav.sidebar:hover + .main{
+			margin-left: 200px;
+		}
+
+		/*Center Brand*/
+		nav.sidebar.navbar.sidebar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+			margin-left: 0px;
+		}
+		/*Center Brand*/
+		nav.sidebar .navbar-brand, nav.sidebar .navbar-header{
+			text-align: center;
+			width: 100%;
+			margin-left: 0px;
+		}
+
+		/*Center Icons*/
+		nav.sidebar a{
+			padding-right: 13px;
+		}
+
+		/*adds border top to first nav box */
+		nav.sidebar .navbar-nav > li:first-child{
+			border-top: 1px #e5e5e5 solid;
+		}
+
+		/*adds border to bottom nav boxes*/
+		nav.sidebar .navbar-nav > li{
+			border-bottom: 1px #e5e5e5 solid;
+		}
+
+		/* Colors/style dropdown box*/
+		nav.sidebar .navbar-nav .open .dropdown-menu {
+			position: static;
+			float: none;
+			width: auto;
+			margin-top: 0;
+			background-color: transparent;
+			border: 0;
+			-webkit-box-shadow: none;
+			box-shadow: none;
+		}
+
+		/*allows nav box to use 100% width*/
+		nav.sidebar .navbar-collapse, nav.sidebar .container-fluid{
+			padding: 0 0px 0 0px;
+		}
+
+		/*colors dropdown box text */
+		.navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
+			color: #777;
+		}
+
+		/*gives sidebar width/height*/
+		nav.sidebar{
+			width: 200px;
+			height: 100%;
+			margin-left: -160px;
+			float: left;
+			z-index: 8000;
+			margin-bottom: 0px;
+		}
+
+		/*give sidebar 100% width;*/
+		nav.sidebar li {
+			width: 100%;
+		}
+
+		/* Move nav to full on mouse over*/
+		nav.sidebar:hover{
+			margin-left: 0px;
+		}
+		/*for hiden things when navbar hidden*/
+		.forAnimate{
+			opacity: 0;
+		}
+	}
+
+	/* .....NavBar: Fully showing nav bar..... */
+
+	@media (min-width: 1330px) {
+
+		/*Allow main to be next to Nav*/
+		.main{
+			width: calc(100% - 200px); /*keeps 100% minus nav size*/
+			margin-left: 200px;
+		}
+
+		/*Show all nav*/
+		nav.sidebar{
+			margin-left: 0px;
+			float: left;
+		}
+		/*Show hidden items on nav*/
+		nav.sidebar .forAnimate{
+			opacity: 1;
+		}
+	}
+
+	nav.sidebar .navbar-nav .open .dropdown-menu>li>a:hover, nav.sidebar .navbar-nav .open .dropdown-menu>li>a:focus {
+		color: #CCC;
+		background-color: transparent;
+	}
+
+	nav:hover .forAnimate{
+		opacity: 1;
+	}
+	section{
+		padding-left: 15px;
+	}
+
+.bigger{
+    font-size:30px;
+    padding-bottom:20px;
+        color: #777;
 }
-.chatbar .control > a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-  cursor: pointer;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+
+.moveTop{
+    padding-top: 10px;
+    
+    font-family: "Gill Sans", Helvetica Neue, monospace;
 }
-.chatbar .control > a svg {
-  width: 28px;
-  height: 28px;
-  display: block;
-  color: #fff;
+
+input:focus {
+    outline:none !important;
 }
-.chatbar .control .text,
-.chatbar .control .list {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 0 0 0 64px;
-  -webkit-transform-origin: 22px 50%;
-          transform-origin: 22px 50%;
+
+button:focus {
+    outline:none !important;
 }
-.chatbar .control .text {
-  top: -4px;
+
+.moveRight{
+    padding-left:7px;
 }
-.chatbar .control .text input {
-  line-height: 24px;
-  padding: 14px 22px;
-  border: 0;
-  border-radius: 26px;
-  background: rgba(255, 255, 255, 0.2);
-  display: block;
-  color: #fff;
-  font-size: 18px;
-  outline: none;
-  width: 100%;
+
+.lighten{
+    font-size: 15px;
+    color: #6495ed
 }
-.chatbar .control .text input::-webkit-input-placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  opacity: 1;
+
+.lighten::placeholder{
+    color: #6495ed
 }
-.chatbar .control .text input:-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  opacity: 1;
+
+
+.scroll{
+    overflow: auto;
+    height:800px;
+    padding-bottom: 120px;
 }
-.chatbar .control .text input::-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  opacity: 1;
+
+
+
+
+
+#myInput {
+  background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  width: 100%; /* Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 5px 5px 5px 15px; /* Add some padding */
+  border: 1px solid #ddd; /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
 }
-.chatbar .control .text input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-  opacity: 1;
-}
-.chatbar .control .list {
+
+#fList {
+  /* Remove default list styling */
+  list-style-type: none;
+  padding: 0;
   margin: 0;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  -webkit-transform: rotate(135deg);
-          transform: rotate(135deg);
-}
-.chatbar .control .list li {
-  --y: 0;
-  transition: -webkit-transform 1s ease;
-  transition: transform 1s ease;
-  transition: transform 1s ease, -webkit-transform 1s ease;
-  -webkit-transform: translateY(var(--y));
-          transform: translateY(var(--y));
-}
-.chatbar .control .list li a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-}
-.chatbar .control .list li a svg {
-  width: 20px;
-  height: 20px;
-  display: block;
-  color: #fff;
-  stroke-linecap: round;
-  stroke-width: 1.2;
-  stroke-linejoin: round;
-}
-.chatbar .control .list li:nth-child(2) {
-  --y: 8px;
-}
-.chatbar .control .list li:nth-child(3) {
-  --y: 16px;
-}
-.chatbar.active {
-  -webkit-animation: top 1s ease-in-out forwards;
-          animation: top 1s ease-in-out forwards;
-}
-.chatbar.active .control {
-  --rotate: -135deg;
-}
-.chatbar.active .control .list li {
-  --y: 0;
-}
-.chatbar.active.default {
-  -webkit-animation: down 1s ease-in-out forwards;
-          animation: down 1s ease-in-out forwards;
-}
-.chatbar.active.default .control {
-  --rotate: 0deg;
 }
 
-@-webkit-keyframes top {
-  0%,
-    100% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  50%,
-    60% {
-    -webkit-transform: rotate(-6deg);
-            transform: rotate(-6deg);
-  }
-  88% {
-    -webkit-transform: rotate(1deg);
-            transform: rotate(1deg);
-  }
+.centerText{
+    text-align: left;
 }
 
-@keyframes top {
-  0%,
-    100% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  50%,
-    60% {
-    -webkit-transform: rotate(-6deg);
-            transform: rotate(-6deg);
-  }
-  88% {
-    -webkit-transform: rotate(1deg);
-            transform: rotate(1deg);
-  }
+.centerText::placeholder{
+    text-align: left;
 }
-@-webkit-keyframes down {
-  0%,
-    100% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  50%,
-    60% {
-    -webkit-transform: rotate(6deg);
-            transform: rotate(6deg);
-  }
-  88% {
-    -webkit-transform: rotate(-1deg);
-            transform: rotate(-1deg);
-  }
-}
-@keyframes down {
-  0%,
-    100% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  50%,
-    60% {
-    -webkit-transform: rotate(6deg);
-            transform: rotate(6deg);
-  }
-  88% {
-    -webkit-transform: rotate(-1deg);
-            transform: rotate(-1deg);
-  }
-}
+
+
+
+
+
+
 html {
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-}
-
-* {
-  box-sizing: inherit;
-}
-*:before, *:after {
-  box-sizing: inherit;
+  height: 100%;
 }
 
 body {
-  min-height: 100vh;
-  display: flex;
-  
+  height: 100%;
+}
+
+.wrapper {
+
+  width: 20%;
+  height: 1%;
+  display: inline;
   align-items: center;
-  background: #E4ECFA;
+  justify-content: center;
+    
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+    
+    float: right;
+    padding-left: -30px;
+
 }
-body .dribbble {
-  position: fixed;
-  display: block;
-  right: 20px;
-  bottom: 20px;
+.wrapper .file-upload {
+  height: 47px;
+  width: 95px;
+  border-radius: 100px;
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #FFFFFF;
+  overflow: hidden;
+  background-image: linear-gradient(to bottom, #222 50%, #FFFFFF 50%);
+  background-size: 100% 200%;
+  transition: all 1s;
+  color: #6495ed;
+  font-size: 100px;
+    margin-left: -148px;
+    margin-top: -3px;
 }
-body .dribbble img {
-  display: block;
-    width:500px;
-  height: 28px;
+.wrapper .file-upload input[type='file'] {
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  top: 1000;
+  left: 1000;
+  opacity: 0;
+  cursor: pointer;
+}
+.wrapper .file-upload:hover {
+  background-position: 0 -100%;
+  color: #222;
 }
 
-.bigger{
-    width:500px;
+
+.shorten{
+    max-width: 650px;
 }
 
+
+
+.mLeft{
+    margin-left:-50px;
+}
+
+.mRight{
+    margin-right: 40px;
+    padding-right: 10px;
+   
+}
