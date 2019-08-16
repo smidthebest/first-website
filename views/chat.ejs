@@ -141,7 +141,7 @@
         //when someone hits submit. 
         var lastMes; 
         var count = 0; 
-        var socket = io.connect();
+        var socket = io.connect({transports: ['polling']});
         $('form').submit(function(e) {
             e.preventDefault(); // prevents page reloading
             socket.emit('chat_message', $('#txt').val(), );
@@ -153,7 +153,6 @@
                $('#messages').append('<li></li>');
 
             }     
-            useDate = instantDate(date);        
             $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count + ',"' + name +'","' + useDate+ '","' +  $('#txt').val() +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + $('#txt').val() + '</span></li>');
             $('#txt').val('');
             var elem = document.getElementById("scroll");
@@ -185,7 +184,6 @@
                $('#messages').append('<li></li>');
 
             }        
-            useDate = instantDate(date); 
             $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count + ',"' + username +'","' + useDate+ '","' +  msg +'")\' style="text-align:right"><span id="opp"> <strong>' + username + '</strong> '  + ': ' + msg + '</span></li>');
 
             var elem = document.getElementById("scroll");
@@ -244,7 +242,6 @@
                   $('#messages').append('<li></li>');
 
                 }        
-                useDate = instantDate(date); 
                 if (username[i][1] == 1) $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  username[i][0].data +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + username[i][0].data + '</span></li>');
                 else $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count+',"' + partner +'","' + useDate+ '","' +  username[i][0].data +'")\' style="text-align:right"><span id="opp"> <strong>' + partner + '</strong> ' + ': ' + username[i][0].data + '</span></li>');
                 lastMes = date; 
@@ -335,28 +332,6 @@
             prev = id;
             document.getElementById(id).style = "background: linear-gradient(to right, #333, #555);";
             document.getElementById("txt").placeholder = name + " --> " + id;
-        }
-
-        function instantDate(date){
-          var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            var hours = date.getHours();
-            var am = "am";
-            if (hours > 12) {
-                hours = hours - 12;
-                am = "pm"
-            }
-
-            var hourString = "";
-            if (hours < 10) {
-                hourString = "0" + hours;
-            } else hourString = "" + hours;
-
-            var min = " ";
-            if (date.getMinutes() < 10) min = "0" + date.getMinutes();
-            else min = date.getMinutes();
-
-            return "on " + months[date.getMonth()] + " " + date.getDate() + ", at " + hourString +  " " + am;
-
         }
 
         function createDate(date) {
