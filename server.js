@@ -204,7 +204,7 @@ io.on("connection", function(socket) {
     });
 
     socket.on('found_part', function(username) {
-        users[socket.username].emit('clear');
+        socket.emit('clear');
         socket.partner = username;
 
         pool.getConnection(function(err, con) {

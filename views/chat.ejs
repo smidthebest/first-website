@@ -98,8 +98,8 @@
 
 <body onload="checkFirstVisit()">
 
-    <div class="moveTop" id="friends" class='bigger'>
-        <nav class="navbar navbar-inverse sidebar" role="navigation">
+    <div class="moveTop scroll" id="friends" class='bigger'>
+        <nav class="navbar navbar-inverse sidebar scroll" role="navigation">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
@@ -110,6 +110,8 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a class="navbar-brand" href="#">Friends</a>
+                    <input style="background-color:#222" class="round lighten centerText" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search from friends...">
+                    
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
@@ -141,24 +143,16 @@
         //when someone hits submit. 
         var lastMes; 
         var count = 0; 
-        var socket = io.connect({transports: ['polling']});
+        var socket = io.connect({transports: ['websocket']});
         $('form').submit(function(e) {
             e.preventDefault(); // prevents page reloading
             socket.emit('chat_message', $('#txt').val(), );
             var date = new Date(Date.now()); //the date displayed here will be different than the one if this is loaded.
-            var useDate = createDate(date);; 
-            if(lastMes == null || date - lastMes > 5*60*1000){
-               $('#messages').append('<li></li>');
-               $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
-               $('#messages').append('<li></li>');
-
-            }     
-            $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count + ',"' + name +'","' + useDate+ '","' +  $('#txt').val() +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + $('#txt').val() + '</span></li>');
+            appendMes(name, date, $('#txt').val(), 0); 
             $('#txt').val('');
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
-            lastMes = date; 
-            count++; 
+            
             return false;
         });
 
@@ -176,20 +170,10 @@
 
         socket.on('chat_message', function(msg, username) {
             var date = new Date(Date.now());
-            var useDate = createDate(date);
-            if(lastMes == null || date - lastMes > 5*60*1000){
-               
-               $('#messages').append('<li></li>');
-               $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
-               $('#messages').append('<li></li>');
-
-            }        
-            $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count + ',"' + username +'","' + useDate+ '","' +  msg +'")\' style="text-align:right"><span id="opp"> <strong>' + username + '</strong> '  + ': ' + msg + '</span></li>');
-
+            appendMes(username, date, msg, 1);      
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
-            lastMes = date; 
-            count++;
+            
         });
 
         socket.on('clear', function() {
@@ -233,23 +217,30 @@
             for (var i = 0; i < username.length; i++) {
                 if (username[i].length == 0) continue;
                 var date = new Date(username[i][0].dt);
-                date.setTime(date.getTime() - (7 * 60 * 60 * 1000));
-                var useDate = createDate(date);
-                if(lastMes == null || date - lastMes > 5*60*1000){
-
-                  $('#messages').append('<li></li>');
-                  $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
-                  $('#messages').append('<li></li>');
-
-                }        
-                if (username[i][1] == 1) $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  username[i][0].data +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + username[i][0].data + '</span></li>');
-                else $('#messages').append('<li id = "'+ count+ '" onclick =\'showDate(' +count+',"' + partner +'","' + useDate+ '","' +  username[i][0].data +'")\' style="text-align:right"><span id="opp"> <strong>' + partner + '</strong> ' + ': ' + username[i][0].data + '</span></li>');
-                lastMes = date; 
-                count++; 
+                   
+                if (username[i][1] == 1) appendMes(name, date, username[i][0].data, 0); 
+                else appendMes(partner, date, username[i][0].data, 1); 
+                 
             }
             var elem = document.getElementById("scroll");
             elem.scrollTop = elem.scrollHeight;
+           
         });
+
+        function appendMes(name, date, msg, dir){
+            var useDate = createDate(date); 
+            if(lastMes == null || date - lastMes > 5*60*1000){
+                $('#messages').append('<li></li>');
+                $('#messages').append('<li style="text-align:center">'  + useDate + ' </li>');
+                $('#messages').append('<li></li>');
+            }  
+            if(dir == 0) $('#messages').append('<li id = "'+ count+ '" onmouseleave=\'showMes('+ count + ',"' + name + '","' + msg + '")\' onmouseover =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  msg +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + msg + '</span></li>');
+            else $('#messages').append('<li style="text-align:right" id = "'+ count+ '" onmouseleave=\'showMes('+ count + ',"' + name + '","' + msg + '")\' onmouseover =\'showDate('+count+',"' + name +'","' + useDate+ '","' +  msg +'")\'><span id="opp"> <strong>' + name + '</strong> '  + ': ' + msg + '</span></li>');
+
+            lastMes = date; 
+            count++; 
+
+        }
 
         socket.on("joined", function(partner) {
             $('#messages').append('<li> <em>' + partner + ' has connected. </em> </li>');
@@ -356,6 +347,11 @@
 
         }
 
+        function showMes(count, name, msg){
+            console.log(count + " "  +  name + " " + msg); 
+            document.getElementById(count).innerHTML = '<span id="opp"> <strong>' + name + '</strong> '  + ': ' + msg + '</span>'; 
+        }
+
         function showDate(count, recep, date, msg){
           document.getElementById(count).innerHTML = '<span id="opp"> <strong>' + recep + '</strong> ' + date + ': ' + msg + '</span>'; 
         }
@@ -384,6 +380,28 @@
                 htmlbodyHeightUpdate()
             });
         });
+        
+        
+        
+        function myFunction() {
+            // Declare variables
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('myInput');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("fList");
+            li = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
     </script>
 </body>
 
